@@ -8,6 +8,7 @@
 - [Разделы сайта и админки](docs/information-architecture.md)
 - [Предлагаемая архитектура](docs/architecture.md)
 - [Внешние данные и автоматическое обновление](docs/data-sources.md)
+- [Вход сотрудников и права доступа](docs/admin-auth.md)
 - [Что установлено о действующих сайтах](docs/current-systems.md)
 - [Решения и открытые вопросы](docs/decisions.md)
 - [Правила для агентов и разработчиков](AGENTS.md)
