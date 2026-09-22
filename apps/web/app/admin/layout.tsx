@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import { AdminProviders } from "@/_app/admin";
+import "@mantine/dates/styles.css";
+import "@mantine/notifications/styles.css";
+import "@mantine/tiptap/styles.css";
 
 export const metadata: Metadata = {
   title: "Админка",
@@ -13,5 +17,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <AdminProviders>{children}</AdminProviders>;
 }
