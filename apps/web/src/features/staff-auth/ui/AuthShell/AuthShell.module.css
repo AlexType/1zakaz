@@ -1,0 +1,89 @@
+.page {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  background: #f8f8f7;
+}
+
+.page::before {
+  position: fixed;
+  z-index: 0;
+  inset: -15%;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(circle at 18% 24%, rgb(237 28 36 / 7%), transparent 38%),
+    radial-gradient(circle at 83% 76%, rgb(185 54 54 / 5%), transparent 42%);
+  animation: background-drift 26s ease-in-out infinite alternate;
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 500px);
+}
+
+.logo {
+  display: block;
+  width: 178px;
+  height: 60px;
+  margin: 0 auto 28px;
+}
+
+.card {
+  padding: 36px;
+  background: #fff;
+  border-color: #e8e8e8;
+  box-shadow: 0 10px 36px rgb(0 0 0 / 5%);
+}
+
+.title {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: #1e1e1e;
+}
+
+.description {
+  margin-top: 8px;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.title + :not(.description) {
+  margin-top: 28px;
+}
+
+@keyframes background-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0);
+  }
+
+  to {
+    transform: translate3d(2%, 1%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page::before {
+    animation: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 24px 12px;
+  }
+
+  .logo {
+    margin-bottom: 20px;
+  }
+
+  .card {
+    padding: 24px 20px;
+  }
+}

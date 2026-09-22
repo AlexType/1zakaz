@@ -5,7 +5,7 @@ import "@mantine/notifications/styles.css";
 import "@mantine/tiptap/styles.css";
 
 export const metadata: Metadata = {
-  title: "Админка",
+  title: "Панель управления",
   robots: {
     index: false,
     follow: false,

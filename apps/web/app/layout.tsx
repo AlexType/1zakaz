@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
 import { MantineAppProvider } from "@/_app/mantine";
+import "@fontsource-variable/inter/wght.css";
 import "@mantine/core/styles.css";
 import "@/_app/styles/globals.css";
 

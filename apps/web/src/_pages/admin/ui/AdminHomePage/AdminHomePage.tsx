@@ -1,7 +1,7 @@
 export function AdminHomePage() {
   return (
     <main>
-      <h1>Админка</h1>
+      <h1>Панель управления</h1>
     </main>
   );
 }

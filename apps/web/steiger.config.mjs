@@ -10,10 +10,18 @@ export default defineConfig([
     },
   },
   {
-    // Маршрут Next.js лежит вне src и ссылается на срез один раз.
-    files: ["./src/_pages/**"],
+    // Маршруты Next.js лежат вне src; часть фич пока доступна только в Storybook.
+    // Анализ ссылок внутри src не видит ни маршрут, ни историю компонента.
+    files: ["./src/_pages/**", "./src/features/**"],
     rules: {
       "fsd/insignificant-slice": "off",
+    },
+  },
+  {
+    // Тесты утилит находятся в lib/test и не входят в публичный API.
+    files: ["./src/shared/lib/test/**"],
+    rules: {
+      "fsd/public-api": "off",
     },
   },
 ]);

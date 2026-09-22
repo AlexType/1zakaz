@@ -1,0 +1,1 @@
+export { MantineAppProvider } from "./MantineAppProvider";
