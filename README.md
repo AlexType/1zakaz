@@ -5,6 +5,7 @@
 ## С чего начать
 
 - [Продукт и границы первого запуска](docs/product.md)
+- [Разделы сайта и админки](docs/information-architecture.md)
 - [Предлагаемая архитектура](docs/architecture.md)
 - [Внешние данные и автоматическое обновление](docs/data-sources.md)
 - [Что установлено о действующих сайтах](docs/current-systems.md)
