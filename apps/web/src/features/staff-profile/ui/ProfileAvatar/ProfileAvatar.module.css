@@ -1,0 +1,100 @@
+.wrap {
+  flex: none;
+  max-width: 18rem;
+}
+
+.avatarBox {
+  position: relative;
+  width: 104px;
+  height: 104px;
+}
+
+.upload {
+  position: relative;
+  display: block;
+  width: 104px;
+  height: 104px;
+  outline-offset: 3px;
+}
+
+.visual {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  background: rgb(0 0 0 / 56%);
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.upload:hover .overlay,
+.upload:focus-visible .overlay {
+  opacity: 1;
+}
+
+.cameraMark {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  color: white;
+  background: var(--mantine-color-red-7);
+  border: 2px solid white;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.edit,
+.remove {
+  position: absolute;
+  top: 0;
+  border: 2px solid white;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease;
+}
+
+.edit {
+  right: 0;
+}
+
+.remove {
+  left: 0;
+}
+
+.avatarBox:hover .edit,
+.avatarBox:hover .remove,
+.avatarBox:focus-within .edit,
+.avatarBox:focus-within .remove {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (hover: none) {
+  .edit,
+  .remove {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .edit,
+  .remove {
+    transition: none;
+  }
+}

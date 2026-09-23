@@ -1,0 +1,6 @@
+.flag {
+  box-sizing: border-box;
+  margin-inline: auto;
+  border: 1px solid var(--mantine-color-gray-4);
+  border-radius: 2px;
+}

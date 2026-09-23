@@ -1,0 +1,16 @@
+.cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--mantine-radius-md);
+  overflow: hidden;
+}
+.emptyCover {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  color: var(--mantine-color-dimmed);
+  background: var(--mantine-color-gray-0);
+  border: 1px dashed var(--mantine-color-gray-4);
+  border-radius: var(--mantine-radius-md);
+}

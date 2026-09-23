@@ -1,4 +1,5 @@
 import { useState, type SubmitEvent } from "react";
+import { showActionError } from "@/shared/lib/show-action-notification";
 import type {
   CreateInvitation,
   CreatedInvitation,
@@ -37,7 +38,7 @@ export function useCreateInvitation(
     try {
       setInvitation(await onCreate(roleId, Number(lifetime)));
     } catch {
-      setError("Не удалось создать приглашение. Попробуйте позже.");
+      showActionError("Не удалось создать приглашение. Попробуйте позже.");
     } finally {
       setBusy(false);
     }

@@ -17,17 +17,10 @@ const codeScreens = {
   "email-code": {
     title: "Проверьте почту",
     description: "Введите код из письма.",
-    purpose: "email",
   },
   "invite-code": {
     title: "Проверьте почту",
     description: "Подтвердите адрес, указанный при регистрации.",
-    purpose: "invitation",
-  },
-  totp: {
-    title: "Введите код из приложения",
-    description: "Код из приложения-аутентификатора",
-    purpose: "totp",
   },
 } as const;
 
@@ -46,30 +39,24 @@ export function StaffAuthFlow(options: StaffAuthFlowOptions) {
           error={error}
           onEmailCode={flow.requestEmailCode}
           onPassword={flow.signInWithPassword}
-          onPasskey={flow.signInWithPasskey}
           onRecovery={() => goTo("recovery")}
         />
       </AuthShell>
     );
   }
 
-  if (
-    screen === "email-code" ||
-    screen === "invite-code" ||
-    screen === "totp"
-  ) {
-    const { title, description, purpose } = codeScreens[screen];
+  if (screen === "email-code" || screen === "invite-code") {
+    const { title, description } = codeScreens[screen];
     return (
       <AuthShell title={title} description={description}>
         <CodeForm
-          key={`${screen}-${challenge?.id ?? flow.totpChallengeId}-${flow.challengeVersion}`}
-          purpose={purpose}
+          key={`${screen}-${challenge?.id}-${flow.challengeVersion}`}
           destination={challenge?.destination ?? "указанную почту"}
           resendAfterSeconds={challenge?.resendAfterSeconds ?? 0}
           busy={busy}
           error={error}
           onVerify={flow.verifyCode}
-          onResend={screen === "totp" ? undefined : flow.resendCode}
+          onResend={flow.resendCode}
           onBack={screen === "invite-code" ? undefined : () => goTo("login")}
         />
       </AuthShell>

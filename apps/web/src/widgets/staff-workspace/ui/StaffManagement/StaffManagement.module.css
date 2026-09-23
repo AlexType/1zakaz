@@ -1,0 +1,20 @@
+.root {
+  padding: clamp(20px, 3vw, 44px);
+  max-width: 1680px;
+  margin-inline: auto;
+}
+.table {
+  overflow: hidden;
+}
+.toolbar {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+.email {
+  display: block;
+  width: 100%;
+  max-width: min(170px, 100%);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

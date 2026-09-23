@@ -1,0 +1,12 @@
+.section {
+  max-width: 1680px;
+  margin-inline: auto;
+  padding: clamp(1rem, 3vw, 2.5rem);
+}
+.paper {
+  overflow: hidden;
+}
+.toolbar {
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}

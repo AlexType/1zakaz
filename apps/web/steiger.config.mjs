@@ -12,7 +12,12 @@ export default defineConfig([
   {
     // Маршруты Next.js лежат вне src; часть фич пока доступна только в Storybook.
     // Анализ ссылок внутри src не видит ни маршрут, ни историю компонента.
-    files: ["./src/_pages/**", "./src/features/**"],
+    files: [
+      "./src/_pages/**",
+      "./src/features/**",
+      "./src/widgets/**",
+      "./src/entities/**",
+    ],
     rules: {
       "fsd/insignificant-slice": "off",
     },

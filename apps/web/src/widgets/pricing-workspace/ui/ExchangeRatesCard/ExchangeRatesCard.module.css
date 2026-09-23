@@ -1,0 +1,10 @@
+.paper {
+  overflow: hidden;
+}
+.heading {
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+.scroll {
+  overflow-x: auto;
+}

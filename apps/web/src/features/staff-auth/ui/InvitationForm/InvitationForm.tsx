@@ -70,7 +70,7 @@ export function InvitationForm({
         />
         <PhoneInput
           key={form.key("phone")}
-          description="Номер используется как логин, если вы позже установите пароль в профиле."
+          description="Контактный номер сотрудника. Для входа используется почта."
           disabled={busy}
           {...form.getInputProps("phone")}
         />

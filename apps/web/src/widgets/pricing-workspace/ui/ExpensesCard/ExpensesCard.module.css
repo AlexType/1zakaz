@@ -1,0 +1,23 @@
+.paper {
+  overflow: hidden;
+}
+.heading {
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+.scroll {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  table-layout: fixed;
+}
+.expenseColumn {
+  width: 43%;
+}
+.currentColumn {
+  width: 26%;
+}
+.nextColumn {
+  width: 31%;
+}

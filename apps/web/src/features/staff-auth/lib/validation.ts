@@ -12,7 +12,7 @@ const phone = z
   });
 
 export const passwordSchema = z.object({
-  phone,
+  email,
   password: z.string().min(1, { error: "Введите пароль" }),
 });
 

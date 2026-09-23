@@ -15,7 +15,7 @@ const invitation = {
 };
 
 const meta = {
-  title: "Панель управления/Доступ сотрудников",
+  title: "Авторизация/Вход и регистрация",
   component: StaffAuthFlow,
   args: { gateway: demoGateway },
   argTypes: { gateway: { control: false } },
@@ -37,10 +37,6 @@ export const SignIn: Story = { name: "Вход" };
 export const EmailCode: Story = {
   name: "Код на почту",
   args: { initialScreen: "email-code", previewChallenge: challenge },
-};
-export const TotpForAdmin: Story = {
-  name: "TOTP администратора",
-  args: { initialScreen: "totp", previewChallenge: challenge },
 };
 export const Invitation: Story = {
   name: "Регистрация по приглашению",

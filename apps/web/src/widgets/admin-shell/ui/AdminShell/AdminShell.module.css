@@ -1,0 +1,431 @@
+.shell {
+  --shell-chrome: #181d26;
+  --shell-chrome-raised: #222936;
+  --shell-chrome-hover: #2a3240;
+  --shell-muted: #939daa;
+  --shell-border: rgb(255 255 255 / 8%);
+  --shell-motion-duration: 220ms;
+  --shell-motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--mantine-color-white);
+  background: var(--shell-chrome);
+  border-inline-end: 0;
+  transition: width var(--shell-motion-duration) var(--shell-motion-ease);
+  will-change: width;
+}
+
+.navRail {
+  position: fixed;
+  z-index: 101;
+  top: 76px;
+  bottom: 16px;
+  left: 244px;
+  width: 40px;
+  background: #f4f5f7;
+  transition: left var(--shell-motion-duration) var(--shell-motion-ease);
+  will-change: left;
+}
+
+.navRail::before {
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: 1px;
+  content: "";
+  background: linear-gradient(
+    transparent 0,
+    rgb(92 103 116 / 42%) calc(50% - 18px),
+    transparent calc(50% - 18px),
+    transparent calc(50% + 18px),
+    rgb(92 103 116 / 42%) calc(50% + 18px),
+    transparent 100%
+  );
+  opacity: 0.55;
+  transform: translateX(-50%);
+  transition: opacity var(--shell-motion-duration) var(--shell-motion-ease);
+}
+
+.navRail:hover::before {
+  opacity: 1;
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  flex: 0 0 218px;
+}
+
+.logo {
+  width: 140px;
+  height: auto;
+}
+
+.headerAction {
+  color: var(--shell-muted);
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.headerAction:hover {
+  color: var(--mantine-color-white);
+  background: rgb(255 255 255 / 8%);
+}
+
+.headerAction:hover svg {
+  transform: scale(1.08);
+}
+
+.collapseButton {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--shell-muted);
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.72;
+  transition:
+    color 160ms ease,
+    opacity var(--shell-motion-duration) var(--shell-motion-ease);
+}
+
+.collapseButton:hover {
+  color: var(--mantine-primary-color-7);
+  background: transparent;
+  opacity: 1;
+}
+
+.collapseControl {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--mantine-primary-color-6);
+  border-radius: 5px;
+  background: #f4f5f7;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.collapseButton svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--shell-motion-duration) var(--shell-motion-ease);
+}
+
+.collapseButton[aria-expanded="false"] svg {
+  transform: rotate(180deg);
+}
+
+.collapseButton:hover .collapseControl,
+.collapseButton:focus-visible .collapseControl {
+  border-color: var(--mantine-primary-color-7);
+  background: var(--mantine-color-red-0);
+}
+
+.collapseButton:focus-visible {
+  outline: none;
+}
+
+.navSection {
+  width: 244px;
+  padding: 14px 10px 10px;
+}
+
+.navLink {
+  width: 224px;
+  height: 42px;
+  min-height: 42px;
+  margin-bottom: 3px;
+  padding-inline: 16px;
+  border-radius: 10px;
+  color: var(--shell-muted);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 560;
+  overflow: hidden;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.navLink :global(.mantine-NavLink-label) {
+  min-width: 0;
+  overflow: hidden;
+  opacity: 1;
+  visibility: visible;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition:
+    opacity var(--shell-motion-duration) var(--shell-motion-ease),
+    visibility 0s;
+}
+
+.navIcon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+}
+
+.navLink:hover {
+  color: var(--mantine-color-white);
+  background: var(--shell-chrome-hover);
+}
+
+.navLink[data-active] {
+  color: var(--mantine-color-white);
+  background: color-mix(
+    in srgb,
+    var(--mantine-primary-color-7) 32%,
+    transparent
+  );
+  box-shadow: inset 3px 0 0 var(--mantine-primary-color-5);
+}
+
+.navLink :global(.mantine-NavLink-section) svg {
+  transition:
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.navLink:hover :global(.mantine-NavLink-section) svg {
+  color: var(--mantine-primary-color-4);
+  transform: translateX(2px) scale(1.05);
+}
+
+.navLink[data-active] :global(.mantine-NavLink-section) svg {
+  color: var(--mantine-primary-color-3);
+}
+
+.accountSection {
+  width: 244px;
+  padding: 10px;
+  border-top: 1px solid var(--shell-border);
+}
+
+.accountButton {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 11px;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.accountButton:hover {
+  background: var(--shell-chrome-hover);
+}
+
+.accountAvatar {
+  border: 1px solid rgb(255 255 255 / 14%);
+}
+
+.accountCopy {
+  min-width: 0;
+  overflow: hidden;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--shell-motion-duration) var(--shell-motion-ease),
+    visibility 0s;
+}
+
+.accountMenuIcon {
+  color: var(--shell-muted);
+  transition:
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.accountButton:hover .accountMenuIcon {
+  color: var(--mantine-color-white);
+  transform: rotate(90deg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 clamp(14px, 2vw, 26px);
+  color: var(--mantine-color-white);
+  background: var(--shell-chrome);
+  border-bottom: 1px solid var(--shell-border);
+}
+
+.headerStart {
+  flex: 1;
+  min-width: 0;
+}
+
+.searchTrigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 440px);
+  height: 38px;
+  padding: 0 10px 0 12px;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 10px;
+  color: var(--shell-muted);
+  background: var(--shell-chrome-raised);
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.searchTrigger:hover {
+  color: var(--mantine-color-white);
+  border-color: rgb(255 255 255 / 16%);
+  background: var(--shell-chrome-hover);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+
+.searchTrigger svg {
+  flex: 0 0 auto;
+  transition: transform 160ms ease;
+}
+
+.searchTrigger:hover svg {
+  transform: scale(1.08);
+}
+
+.searchLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.searchHotkey {
+  flex: 0 0 auto;
+  border-color: rgb(255 255 255 / 8%);
+  color: var(--shell-muted);
+  background: rgb(255 255 255 / 5%);
+}
+
+.main {
+  min-width: 0;
+  min-height: 100dvh;
+  background: #f4f5f7;
+  transition: padding-inline-start var(--shell-motion-duration)
+    var(--shell-motion-ease);
+}
+
+.content {
+  width: 100%;
+  max-width: 1760px;
+  margin: 0 auto;
+}
+
+@media (min-width: 48em) {
+  .shell .navbar {
+    width: 244px;
+  }
+
+  .shell .main {
+    padding-inline-start: 284px;
+  }
+
+  .shell[data-compact="true"] .navRail {
+    left: 72px;
+  }
+
+  .shell[data-compact="true"] .navbar {
+    width: 72px;
+  }
+
+  .shell[data-compact="true"] .main {
+    padding-inline-start: 112px;
+  }
+
+  .navbar[data-compact="true"] .accountCopy,
+  .navbar[data-compact="true"] .accountMenuIcon {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--shell-motion-duration) var(--shell-motion-ease),
+      visibility 0s linear var(--shell-motion-duration);
+  }
+
+  .navbar[data-compact="true"] .navLink :global(.mantine-NavLink-label) {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--shell-motion-duration) var(--shell-motion-ease),
+      visibility 0s linear var(--shell-motion-duration);
+  }
+}
+
+@media (max-width: 47.99em) {
+  .navRail {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding-inline: 12px;
+  }
+
+  .headerBrand {
+    flex: 0 0 auto;
+  }
+
+  .logo {
+    width: 118px;
+  }
+
+  .searchTrigger {
+    width: 44px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .searchLabel,
+  .searchHotkey {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapseButton,
+  .collapseButton svg,
+  .headerAction,
+  .navLink,
+  .navLink :global(.mantine-NavLink-section) svg,
+  .accountButton,
+  .accountMenuIcon,
+  .searchTrigger,
+  .searchTrigger svg {
+    transition: none;
+  }
+
+  .navbar,
+  .navRail,
+  .main,
+  .accountCopy,
+  .navLink :global(.mantine-NavLink-label) {
+    transition: none;
+  }
+}

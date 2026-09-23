@@ -1,8 +1,4 @@
-export type StaffProfile = {
-  fullName: string;
-  email: string;
-  phone: string;
-};
+export type StaffProfile = { fullName: string; email: string; phone: string };
 
 export type EmailChallenge = {
   id: string;
@@ -10,21 +6,12 @@ export type EmailChallenge = {
   resendAfterSeconds: number;
 };
 
-export type PasswordSignInResult =
-  | { status: "authenticated" }
-  | { status: "totp-required"; challengeId: string };
-
 /** The API adapter will translate HTTP responses into these UI operations. */
 export type StaffAuthGateway = {
   requestEmailCode(email: string): Promise<EmailChallenge>;
   resendEmailCode(challengeId: string): Promise<EmailChallenge>;
   verifyEmailCode(challengeId: string, code: string): Promise<void>;
-  signInWithPassword(
-    phone: string,
-    password: string,
-  ): Promise<PasswordSignInResult>;
-  verifyTotp(challengeId: string, code: string): Promise<void>;
-  signInWithPasskey(): Promise<void>;
+  signInWithPassword(email: string, password: string): Promise<void>;
   acceptInvitation(
     token: string,
     profile: StaffProfile,
@@ -45,7 +32,6 @@ export type AuthFailureCode =
   | "invalid-code"
   | "expired-code"
   | "rate-limited"
-  | "passkey-unavailable"
   | "invitation-expired"
   | "unavailable";
 

@@ -22,8 +22,6 @@ function gatewayWith(overrides: Partial<StaffAuthGateway>): StaffAuthGateway {
     resendEmailCode: unused,
     verifyEmailCode: unused,
     signInWithPassword: unused,
-    verifyTotp: unused,
-    signInWithPasskey: unused,
     acceptInvitation: unused,
     resendInvitationCode: unused,
     verifyInvitationEmail: unused,
@@ -79,13 +77,9 @@ it("проверяет почту до запроса кода и проходи
   ).toBeInTheDocument();
 });
 
-it("после входа по паролю запрашивает код из приложения", async () => {
-  const signInWithPassword = vi.fn(async () => ({
-    status: "totp-required" as const,
-    challengeId: "totp-1",
-  }));
-  const verifyTotp = vi.fn(async () => {});
-  const gateway = gatewayWith({ signInWithPassword, verifyTotp });
+it("входит по почте и паролю", async () => {
+  const signInWithPassword = vi.fn(async () => {});
+  const gateway = gatewayWith({ signInWithPassword });
 
   render(
     <MantineProvider>
@@ -93,31 +87,20 @@ it("после входа по паролю запрашивает код из �
     </MantineProvider>,
   );
 
-  fireEvent.click(screen.getByRole("tab", { name: "Номер и пароль" }));
-  fireEvent.change(screen.getByRole("textbox", { name: "Номер телефона" }), {
-    target: { value: "8 999 123-45-67" },
+  fireEvent.click(screen.getByRole("tab", { name: "Почта и пароль" }));
+  fireEvent.change(screen.getByRole("textbox", { name: "Электронная почта" }), {
+    target: { value: "manager@example.ru" },
   });
   fireEvent.change(screen.getByPlaceholderText("Введите пароль"), {
     target: { value: "secret" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Войти" }));
 
-  expect(
-    await screen.findByRole("heading", { name: "Введите код из приложения" }),
-  ).toBeInTheDocument();
-  expect(signInWithPassword).toHaveBeenCalledWith("+79991234567", "secret");
-
-  "123456".split("").forEach((digit, index) => {
-    fireEvent.change(
-      screen.getByRole("textbox", {
-        name: `Код из приложения, цифра ${index + 1} из 6`,
-      }),
-      { target: { value: digit } },
-    );
-  });
-  fireEvent.click(screen.getByRole("button", { name: "Подтвердить" }));
   await waitFor(() =>
-    expect(verifyTotp).toHaveBeenCalledWith("totp-1", "123456"),
+    expect(signInWithPassword).toHaveBeenCalledWith(
+      "manager@example.ru",
+      "secret",
+    ),
   );
   expect(
     await screen.findByRole("heading", { name: "Вы вошли" }),

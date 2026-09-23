@@ -10,7 +10,6 @@ it("переводит фокус между ячейками и принима�
     <MantineProvider>
       <CodeForm
         destination="manager@example.ru"
-        purpose="email"
         resendAfterSeconds={0}
         busy={false}
         error={null}

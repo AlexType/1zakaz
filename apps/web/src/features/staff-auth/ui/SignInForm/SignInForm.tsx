@@ -1,28 +1,17 @@
 "use client";
 
-import {
-  Anchor,
-  Button,
-  Divider,
-  PasswordInput,
-  Stack,
-  Tabs,
-} from "@mantine/core";
+import { Anchor, Button, PasswordInput, Stack, Tabs } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
-import { IconFingerprint } from "@tabler/icons-react";
 import { emailSchema, passwordSchema } from "../../lib/validation";
-import { normalizeRussianPhone } from "@/shared/lib/normalize-russian-phone";
 import { FormError } from "@/shared/ui/FormError";
 import { EmailInput } from "../EmailInput";
-import { PhoneInput } from "../PhoneInput";
 
 type SignInFormProps = {
   busy: boolean;
   error: string | null;
   initialMethod?: "email" | "password";
   onEmailCode: (email: string) => void;
-  onPassword: (phone: string, password: string) => void;
-  onPasskey: () => void;
+  onPassword: (email: string, password: string) => void;
   onRecovery: () => void;
 };
 
@@ -32,7 +21,6 @@ export function SignInForm({
   initialMethod = "email",
   onEmailCode,
   onPassword,
-  onPasskey,
   onRecovery,
 }: SignInFormProps) {
   const emailForm = useForm({
@@ -42,7 +30,7 @@ export function SignInForm({
   });
   const passwordForm = useForm({
     mode: "uncontrolled",
-    initialValues: { phone: "", password: "" },
+    initialValues: { email: "", password: "" },
     validate: schemaResolver(passwordSchema, { sync: true }),
   });
 
@@ -52,7 +40,7 @@ export function SignInForm({
       <Tabs defaultValue={initialMethod} keepMounted={false}>
         <Tabs.List grow>
           <Tabs.Tab value="email">Код на почту</Tabs.Tab>
-          <Tabs.Tab value="password">Номер и пароль</Tabs.Tab>
+          <Tabs.Tab value="password">Почта и пароль</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="email" pt="lg">
           <form
@@ -75,17 +63,16 @@ export function SignInForm({
         </Tabs.Panel>
         <Tabs.Panel value="password" pt="lg">
           <form
-            onSubmit={passwordForm.onSubmit(({ phone, password }) => {
-              const normalizedPhone = normalizeRussianPhone(phone);
-              if (normalizedPhone) onPassword(normalizedPhone, password);
-            })}
+            onSubmit={passwordForm.onSubmit(({ email, password }) =>
+              onPassword(email.trim(), password),
+            )}
             noValidate
           >
             <Stack gap="md">
-              <PhoneInput
-                key={passwordForm.key("phone")}
+              <EmailInput
+                key={passwordForm.key("email")}
                 disabled={busy}
-                {...passwordForm.getInputProps("phone")}
+                {...passwordForm.getInputProps("email")}
               />
               <PasswordInput
                 key={passwordForm.key("password")}
@@ -103,17 +90,6 @@ export function SignInForm({
           </form>
         </Tabs.Panel>
       </Tabs>
-      <Divider label="или" labelPosition="center" />
-      <Button
-        variant="default"
-        size="md"
-        leftSection={<IconFingerprint size={20} />}
-        onClick={onPasskey}
-        loading={busy}
-        fullWidth
-      >
-        Войти с passkey
-      </Button>
       <Anchor
         component="button"
         type="button"

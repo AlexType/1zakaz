@@ -12,7 +12,6 @@ import {
 export type AuthScreen =
   | "login"
   | "email-code"
-  | "totp"
   | "invite"
   | "invite-code"
   | "invite-invalid"
@@ -35,8 +34,6 @@ const errorMessages: Record<AuthActionError["code"], string> = {
   "invalid-code": "Код не подошёл. Проверьте цифры и попробуйте ещё раз.",
   "expired-code": "Срок действия кода истёк. Запросите новый код.",
   "rate-limited": "Слишком много попыток. Попробуйте позже.",
-  "passkey-unavailable":
-    "Passkey недоступен на этом устройстве или операция была отменена.",
   "invitation-expired":
     "Приглашение недействительно. Попросите администратора отправить новое.",
   unavailable: "Сервис входа пока недоступен. Попробуйте позже.",
@@ -56,7 +53,6 @@ export function useStaffAuthFlow({
     previewChallenge ?? null,
   );
   const [challengeVersion, setChallengeVersion] = useState(0);
-  const [totpChallengeId, setTotpChallengeId] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -91,21 +87,9 @@ export function useStaffAuthFlow({
     });
   }
 
-  function signInWithPassword(phone: string, password: string) {
+  function signInWithPassword(email: string, password: string) {
     execute(async () => {
-      const result = await gateway.signInWithPassword(phone, password);
-      if (result.status === "totp-required") {
-        setTotpChallengeId(result.challengeId);
-        goTo("totp");
-      } else {
-        authenticated();
-      }
-    });
-  }
-
-  function signInWithPasskey() {
-    execute(async () => {
-      await gateway.signInWithPasskey();
+      await gateway.signInWithPassword(email, password);
       authenticated();
     });
   }
@@ -119,14 +103,6 @@ export function useStaffAuthFlow({
   }
 
   function verifyCode(code: string) {
-    if (screen === "totp") {
-      execute(async () => {
-        await gateway.verifyTotp(totpChallengeId, code);
-        authenticated();
-      });
-      return;
-    }
-
     if (!challenge) {
       setError(errorMessages.unavailable);
       return;
@@ -169,13 +145,11 @@ export function useStaffAuthFlow({
     screen,
     challenge,
     challengeVersion,
-    totpChallengeId,
     busy,
     error,
     goTo,
     requestEmailCode,
     signInWithPassword,
-    signInWithPasskey,
     acceptInvitation,
     verifyCode,
     resendCode,

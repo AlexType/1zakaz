@@ -18,7 +18,6 @@ type CodeFormProps = {
   busy: boolean;
   error: string | null;
   resendAfterSeconds: number;
-  purpose: "email" | "invitation" | "totp";
   onVerify: (code: string) => void;
   onResend?: () => void;
   onBack?: () => void;
@@ -29,7 +28,6 @@ export function CodeForm({
   busy,
   error,
   resendAfterSeconds,
-  purpose,
   onVerify,
   onResend,
   onBack,
@@ -39,8 +37,7 @@ export function CodeForm({
   const [validationError, setValidationError] = useState<string | null>(null);
   const codeId = useId();
 
-  const isTotp = purpose === "totp";
-  const codeLabel = isTotp ? "Код из приложения" : "Код из письма";
+  const codeLabel = "Код из письма";
 
   function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -57,9 +54,7 @@ export function CodeForm({
       <Stack gap="lg">
         <FormError message={error} />
         <Text size="sm" c="dimmed">
-          {isTotp
-            ? "Откройте приложение-аутентификатор на своём устройстве."
-            : `Код отправлен на ${destination}.`}
+          Код отправлен на {destination}.
         </Text>
         <div>
           <Input.Label htmlFor={`${codeId}-1`} mb="xs">
@@ -101,7 +96,7 @@ export function CodeForm({
               Назад
             </Anchor>
           )}
-          {onResend && !isTotp && (
+          {onResend && (
             <Anchor
               component="button"
               type="button"

@@ -1,0 +1,18 @@
+.paper {
+  overflow: hidden;
+}
+.heading {
+  padding: 1.25rem;
+}
+.scroll {
+  overflow-x: auto;
+}
+.table {
+  min-width: 800px;
+}
+.label {
+  min-width: 150px;
+}
+.url {
+  min-width: 190px;
+}

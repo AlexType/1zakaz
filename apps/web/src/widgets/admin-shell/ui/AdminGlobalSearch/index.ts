@@ -1,0 +1,1 @@
+export { AdminGlobalSearch } from "./AdminGlobalSearch";

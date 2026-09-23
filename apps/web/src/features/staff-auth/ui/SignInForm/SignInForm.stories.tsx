@@ -5,14 +5,13 @@ import { SignInForm } from "./SignInForm";
 const noop = () => {};
 
 const meta = {
-  title: "Панель управления/Доступ сотрудников/Состояния входа",
+  title: "Авторизация/Состояния входа",
   component: SignInForm,
   args: {
     busy: false,
     error: null,
     onEmailCode: noop,
     onPassword: noop,
-    onPasskey: noop,
     onRecovery: noop,
   },
   render: (args) => (
@@ -30,7 +29,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Password: Story = {
-  name: "Номер и пароль",
+  name: "Почта и пароль",
   args: { initialMethod: "password" },
 };
 export const InvalidCredentials: Story = {
@@ -39,12 +38,6 @@ export const InvalidCredentials: Story = {
     initialMethod: "password",
     error:
       "Не удалось войти. Проверьте данные или выберите другой способ входа.",
-  },
-};
-export const PasskeyUnavailable: Story = {
-  name: "Passkey недоступен",
-  args: {
-    error: "Passkey недоступен на этом устройстве или операция была отменена.",
   },
 };
 export const Submitting: Story = {

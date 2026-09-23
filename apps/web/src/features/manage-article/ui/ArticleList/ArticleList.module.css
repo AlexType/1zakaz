@@ -1,0 +1,16 @@
+.root {
+  padding: clamp(20px, 3vw, 44px);
+  max-width: 1680px;
+  margin-inline: auto;
+}
+.paper {
+  overflow: hidden;
+}
+.toolbar {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+.title {
+  min-width: 0;
+  max-width: 270px;
+}

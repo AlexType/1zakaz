@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { CreateInvitationForm } from "./CreateInvitationForm";
 
 const meta = {
-  title: "Панель управления/Доступ сотрудников/Создание приглашения",
+  title: "Панель управления/Сотрудники/Приглашение",
   component: CreateInvitationForm,
   args: {
     availableRoles: [
@@ -28,7 +28,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = { name: "Создать ссылку" };
+export const Default: Story = { name: "Создание" };
 export const RestrictedRoles: Story = {
   name: "Ограниченный выбор ролей",
   args: { availableRoles: [{ value: "manager", label: "Менеджер" }] },

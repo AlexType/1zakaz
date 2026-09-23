@@ -3,6 +3,9 @@ import { AdminProviders } from "@/_app/admin";
 import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/tiptap/styles.css";
+import "@mantine/lightbox/styles.css";
+import "@mantine/spotlight/styles.css";
+import "mantine-datatable/styles.css";
 
 export const metadata: Metadata = {
   title: "Панель управления",

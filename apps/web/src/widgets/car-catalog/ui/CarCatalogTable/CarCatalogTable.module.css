@@ -1,0 +1,32 @@
+.section {
+  max-width: 1760px;
+  margin-inline: auto;
+  padding: clamp(1rem, 2vw, 1.75rem);
+}
+
+.paper {
+  overflow: hidden;
+}
+
+.toolbar {
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.modelLink {
+  color: var(--mantine-color-text);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.modelLink:hover {
+  color: var(--mantine-primary-color-7);
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .toolbar {
+    padding: 1rem;
+  }
+}

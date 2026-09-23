@@ -1,0 +1,29 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  gap: 1rem;
+}
+.pageList {
+  align-self: start;
+  overflow: hidden;
+}
+.pageButton {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  text-align: left;
+}
+.pageButton:last-child {
+  border-bottom: 0;
+}
+.pageButton[data-active="true"] {
+  background: var(--mantine-color-red-0);
+}
+.block {
+  padding: 0.875rem 1rem;
+}
+@media (max-width: 48em) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

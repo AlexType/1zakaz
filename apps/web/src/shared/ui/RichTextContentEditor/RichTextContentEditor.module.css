@@ -1,0 +1,11 @@
+.label {
+  display: block;
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.editor :global(.tiptap) {
+  min-height: 320px;
+  line-height: 1.65;
+}

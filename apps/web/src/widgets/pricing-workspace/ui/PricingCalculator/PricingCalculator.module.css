@@ -1,0 +1,14 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--mantine-spacing-lg);
+}
+.emptyResult {
+  min-height: 240px;
+}
+@media (min-width: 72em) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}

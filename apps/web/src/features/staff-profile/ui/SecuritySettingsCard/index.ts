@@ -1,0 +1,1 @@
+export { SecuritySettingsCard } from "./SecuritySettingsCard";

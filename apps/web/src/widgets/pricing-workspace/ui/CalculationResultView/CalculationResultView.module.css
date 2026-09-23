@@ -1,0 +1,9 @@
+.line {
+  min-width: 0;
+}
+.line > *:first-child {
+  min-width: 0;
+}
+.line > *:last-child {
+  flex-shrink: 0;
+}

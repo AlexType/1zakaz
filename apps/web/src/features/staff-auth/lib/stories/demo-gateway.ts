@@ -14,15 +14,10 @@ export const demoGateway: StaffAuthGateway = {
   async verifyEmailCode(_challengeId, code) {
     if (code !== "123456") throw new AuthActionError("invalid-code");
   },
-  async signInWithPassword(_phone, password) {
+  async signInWithPassword(_email, password) {
     if (password !== "demo-password")
       throw new AuthActionError("invalid-credentials");
-    return { status: "totp-required", challengeId: "demo-totp" };
   },
-  async verifyTotp(_challengeId, code) {
-    if (code !== "123456") throw new AuthActionError("invalid-code");
-  },
-  async signInWithPasskey() {},
   async acceptInvitation(_token, profile) {
     return {
       id: "demo-invite",

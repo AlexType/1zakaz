@@ -1,0 +1,1 @@
+export { CarCatalogTable } from "./CarCatalogTable";

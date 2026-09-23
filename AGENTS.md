@@ -1,6 +1,6 @@
 # Инструкции для агентов
 
-Читайте `README.md`, `docs/product.md`, `docs/information-architecture.md`, `docs/architecture.md`, `docs/frontend-dependencies.md`, `docs/data-sources.md`, `docs/admin-auth.md`, `docs/current-systems.md` и `docs/decisions.md` перед проектной работой. Статус каждого положения важен: подтверждённое решение, предложение и открытый вопрос — разные вещи.
+Читайте `README.md`, `docs/product.md`, `docs/information-architecture.md`, `docs/architecture.md`, `docs/frontend-dependencies.md`, `docs/admin-interface.md`, `docs/data-sources.md`, `docs/admin-auth.md`, `docs/current-systems.md` и `docs/decisions.md` перед проектной работой. Статус каждого положения важен: подтверждённое решение, предложение и открытый вопрос — разные вещи.
 
 Фронтенд уже инициализирован в `apps/web`; backend и развёртывание ещё не начаты. Развивайте приложение только в рамках текущей задачи и не считайте черновые проектные предложения утверждёнными требованиями. Не меняйте действующие сайты и серверы при работе над этим репозиторием.
 

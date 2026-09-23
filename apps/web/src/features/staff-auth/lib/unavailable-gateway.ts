@@ -10,8 +10,6 @@ export const unavailableGateway: StaffAuthGateway = {
   resendEmailCode: unavailable,
   verifyEmailCode: unavailable,
   signInWithPassword: unavailable,
-  verifyTotp: unavailable,
-  signInWithPasskey: unavailable,
   acceptInvitation: unavailable,
   resendInvitationCode: unavailable,
   verifyInvitationEmail: unavailable,

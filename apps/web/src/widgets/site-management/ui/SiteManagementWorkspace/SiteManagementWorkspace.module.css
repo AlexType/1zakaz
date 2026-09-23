@@ -1,0 +1,5 @@
+.section {
+  max-width: 1680px;
+  margin-inline: auto;
+  padding: clamp(1rem, 3vw, 2.5rem);
+}

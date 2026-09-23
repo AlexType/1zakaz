@@ -1,0 +1,15 @@
+.paper {
+  overflow: hidden;
+}
+.heading {
+  padding: 1.25rem;
+}
+.scroll {
+  overflow-x: auto;
+}
+.table {
+  min-width: 720px;
+}
+.path {
+  min-width: 230px;
+}

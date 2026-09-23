@@ -1,0 +1,1 @@
+export { LegalDocumentsCard } from "./LegalDocumentsCard";

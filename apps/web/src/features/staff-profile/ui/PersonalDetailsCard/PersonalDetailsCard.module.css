@@ -1,0 +1,13 @@
+.header {
+  min-height: 36px;
+}
+
+.identity {
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .identity {
+    flex-wrap: wrap;
+  }
+}

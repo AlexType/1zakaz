@@ -14,7 +14,7 @@ export function AdminProviders({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <DatesProvider settings={{ locale: "ru", firstDayOfWeek: 1 }}>
         <ModalsProvider>
-          <Notifications />
+          <Notifications position="bottom-right" autoClose={5000} limit={3} />
           {children}
         </ModalsProvider>
       </DatesProvider>

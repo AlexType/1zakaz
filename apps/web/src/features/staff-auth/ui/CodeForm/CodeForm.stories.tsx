@@ -5,11 +5,10 @@ import { CodeForm } from "./CodeForm";
 const noop = () => {};
 
 const meta = {
-  title: "Панель управления/Доступ сотрудников/Состояния подтверждения",
+  title: "Авторизация/Состояния подтверждения",
   component: CodeForm,
   args: {
     destination: "n•••@example.ru",
-    purpose: "email",
     resendAfterSeconds: 0,
     busy: false,
     error: null,

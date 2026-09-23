@@ -11,3 +11,13 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: () => false,
   }),
 });
+
+class MockResizeObserver implements ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+globalThis.ResizeObserver = MockResizeObserver;
+
+Element.prototype.scrollIntoView = () => {};
