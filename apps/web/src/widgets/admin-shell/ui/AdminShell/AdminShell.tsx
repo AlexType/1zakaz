@@ -27,6 +27,7 @@ import {
   IconSearch,
   IconUserCircle,
 } from "@tabler/icons-react";
+import { getPublicAssetPath } from "@/shared/lib/get-public-asset-path";
 import { getPersonInitials } from "@/shared/lib/format-person-short-name";
 import type { AdminSearchItem } from "../../model/admin-search";
 import {
@@ -105,7 +106,7 @@ export function AdminShell({
       <AppShell.Header className={classes.header}>
         <div className={classes.headerBrand}>
           <Image
-            src="/perviy-zakaz-logo-on-dark.svg"
+            src={getPublicAssetPath("/perviy-zakaz-logo-on-dark.svg")}
             alt="Первый заказ"
             width={178}
             height={60}

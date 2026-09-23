@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { getPublicAssetPath } from "@/shared/lib/get-public-asset-path";
 import {
   demoProfile,
   demoProfileActions,
@@ -29,8 +30,8 @@ export const WithAvatar: Story = {
   args: {
     initialProfile: {
       ...demoProfile,
-      avatarUrl: "/storybook-avatar.svg",
-      avatarSourceUrl: "/storybook-avatar.svg",
+      avatarUrl: getPublicAssetPath("/storybook-avatar.svg"),
+      avatarSourceUrl: getPublicAssetPath("/storybook-avatar.svg"),
     },
   },
 };

@@ -1,4 +1,5 @@
 import type { Lead } from "@/entities/lead";
+import { getPublicAssetPath } from "@/shared/lib/get-public-asset-path";
 
 export const DEMO_LEADS: Lead[] = [
   {
@@ -36,7 +37,7 @@ export const DEMO_LEADS: Lead[] = [
     message: "Уточнить срок доставки и комплектацию.",
     budgetRub: 3180000,
     managerName: "Петрова Анна Сергеевна",
-    managerAvatarUrl: "/storybook-avatar.svg",
+    managerAvatarUrl: getPublicAssetPath("/storybook-avatar.svg"),
     nextActionAt: "2026-09-23T07:30:00Z",
     pageUrl: "/china/geely-monjaro-2025",
     carLabel: "Geely Monjaro, 2025",
@@ -92,7 +93,7 @@ export const DEMO_LEADS: Lead[] = [
     message: "",
     budgetRub: 1450000,
     managerName: "Петрова Анна Сергеевна",
-    managerAvatarUrl: "/storybook-avatar.svg",
+    managerAvatarUrl: getPublicAssetPath("/storybook-avatar.svg"),
     nextActionAt: null,
     pageUrl: "/contacts",
     carLabel: "Honda Fit, 2020",

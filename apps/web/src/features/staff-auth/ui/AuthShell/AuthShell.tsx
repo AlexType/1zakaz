@@ -1,6 +1,7 @@
 import { Box, Paper, Text, Title } from "@mantine/core";
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { getPublicAssetPath } from "@/shared/lib/get-public-asset-path";
 import classes from "./AuthShell.module.css";
 
 type AuthShellProps = {
@@ -14,7 +15,7 @@ export function AuthShell({ title, description, children }: AuthShellProps) {
     <Box className={classes.page}>
       <main className={classes.layout}>
         <Image
-          src="/perviy-zakaz-logo.svg"
+          src={getPublicAssetPath("/perviy-zakaz-logo.svg")}
           alt="Первый заказ"
           width={178}
           height={60}

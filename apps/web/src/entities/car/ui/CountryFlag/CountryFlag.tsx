@@ -1,12 +1,13 @@
 import { Image } from "@mantine/core";
+import { getPublicAssetPath } from "@/shared/lib/get-public-asset-path";
 import type { CarCountry } from "../../model/catalog-car";
 import { COUNTRY_LABELS } from "../../model/catalog-options";
 import classes from "./CountryFlag.module.css";
 
 const flags: Record<CarCountry, string> = {
-  japan: "/flags/jp.svg",
-  china: "/flags/cn.svg",
-  korea: "/flags/kr.svg",
+  japan: getPublicAssetPath("/flags/jp.svg"),
+  china: getPublicAssetPath("/flags/cn.svg"),
+  korea: getPublicAssetPath("/flags/kr.svg"),
 };
 
 export function CountryFlag({ country }: { country: CarCountry }) {

@@ -9,6 +9,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { StaffProfileDemo } from "@/features/staff-profile";
+import { getPublicAssetPath } from "@/shared/lib/get-public-asset-path";
 import {
   AdminShell,
   type AdminSearchItem,
@@ -33,7 +34,7 @@ const DEMO_USER: Record<
   manager: {
     name: "Анна Петрова",
     roleLabel: "Менеджер",
-    avatarUrl: "/storybook-avatar.svg",
+    avatarUrl: getPublicAssetPath("/storybook-avatar.svg"),
   },
 };
 
