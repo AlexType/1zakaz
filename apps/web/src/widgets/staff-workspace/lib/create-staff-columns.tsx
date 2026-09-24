@@ -12,13 +12,10 @@ import type { StaffMember, StaffRole, StaffStatus } from "@/entities/employee";
 import { formatCompactDateTime } from "@/shared/lib/format-compact-date";
 import { formatRussianPhone } from "@/shared/lib/format-russian-phone";
 import { GridPersonCell } from "@/shared/ui/GridPersonCell";
-import { GridSelectFilter, GridTextFilter } from "@/shared/ui/GridColumnFilter";
 import { canManageStaffMember } from "./can-manage-staff-member";
 import {
   STAFF_ROLE_OPTIONS,
   STAFF_STATUS_OPTIONS,
-  STAFF_ROLE_FILTER_OPTIONS,
-  STAFF_STATUS_FILTER_OPTIONS,
 } from "../model/staff-management-options";
 import classes from "../ui/StaffManagement/StaffManagement.module.css";
 
@@ -36,19 +33,12 @@ export type StaffAction = {
 };
 
 type Options = {
-  filters: StaffFilters;
-  updateFilter: <K extends keyof StaffFilters>(
-    key: K,
-    value: StaffFilters[K],
-  ) => void;
   currentUserId: string;
   activeAdmins: number;
   onAction: (action: StaffAction) => void;
 };
 
 export function createStaffColumns({
-  filters,
-  updateFilter,
   currentUserId,
   activeAdmins,
   onAction,
@@ -60,14 +50,6 @@ export function createStaffColumns({
       width: 205,
       pinned: "left",
       sortable: true,
-      filter: (
-        <GridTextFilter
-          label="Сотрудник"
-          value={filters.name}
-          onChange={(value) => updateFilter("name", value)}
-        />
-      ),
-      filtering: Boolean(filters.name.trim()),
       render: (member) => (
         <GridPersonCell
           name={`${member.lastName} ${member.firstName} ${member.patronymic ?? ""}`.trim()}
@@ -83,15 +65,6 @@ export function createStaffColumns({
       resizable: true,
       draggable: true,
       toggleable: true,
-      filter: (
-        <GridSelectFilter
-          label="Роль"
-          value={filters.role}
-          options={STAFF_ROLE_FILTER_OPTIONS}
-          onChange={(value) => updateFilter("role", value)}
-        />
-      ),
-      filtering: filters.role !== "all",
       render: (member) =>
         STAFF_ROLE_OPTIONS.find((option) => option.value === member.role)
           ?.label,
@@ -104,14 +77,6 @@ export function createStaffColumns({
       resizable: true,
       draggable: true,
       toggleable: true,
-      filter: (
-        <GridTextFilter
-          label="Почта"
-          value={filters.email}
-          onChange={(value) => updateFilter("email", value)}
-        />
-      ),
-      filtering: Boolean(filters.email.trim()),
       render: (member) => (
         <Text size="sm" className={classes.email} title={member.email}>
           {member.email}
@@ -125,14 +90,6 @@ export function createStaffColumns({
       resizable: true,
       draggable: true,
       toggleable: true,
-      filter: (
-        <GridTextFilter
-          label="Телефон"
-          value={filters.phone}
-          onChange={(value) => updateFilter("phone", value)}
-        />
-      ),
-      filtering: Boolean(filters.phone.trim()),
       render: (member) =>
         member.phone ? formatRussianPhone(member.phone) : "—",
     },
@@ -145,15 +102,6 @@ export function createStaffColumns({
       resizable: true,
       draggable: true,
       toggleable: true,
-      filter: (
-        <GridSelectFilter
-          label="Доступ"
-          value={filters.status}
-          options={STAFF_STATUS_FILTER_OPTIONS}
-          onChange={(value) => updateFilter("status", value)}
-        />
-      ),
-      filtering: filters.status !== "all",
       render: (member) => (
         <Badge
           color={

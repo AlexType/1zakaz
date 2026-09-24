@@ -19,35 +19,16 @@ import {
 } from "@/shared/lib/format-compact-date";
 import { formatRubles } from "@/shared/lib/format-rubles";
 import { GridPersonCell } from "@/shared/ui/GridPersonCell";
-import { GridSelectFilter, GridTextFilter } from "@/shared/ui/GridColumnFilter";
-import type { CatalogFilters } from "./use-car-catalog-table";
-import {
-  COUNTRY_FILTER_OPTIONS,
-  PHOTO_FILTER_OPTIONS,
-  PRICE_FILTER_OPTIONS,
-  PUBLICATION_FILTER_OPTIONS,
-} from "../model/filter-options";
 import { CarCatalogRowActions } from "../ui/CarCatalogRowActions";
 import classes from "../ui/CarCatalogTable/CarCatalogTable.module.css";
 
 type ColumnOptions = {
-  filters: CatalogFilters;
-  yearOptions: { value: string; label: string }[];
-  managerOptions: { value: string; label: string }[];
-  updateFilter: <Key extends keyof CatalogFilters>(
-    key: Key,
-    value: CatalogFilters[Key],
-  ) => void;
   onEdit?: (car: CatalogCar) => void;
   onDuplicate?: (car: CatalogCar) => void;
   onPreviewPhoto?: (car: CatalogCar) => void;
 };
 
 export function createCarColumns({
-  filters,
-  yearOptions,
-  managerOptions,
-  updateFilter,
   onEdit,
   onDuplicate,
   onPreviewPhoto,
@@ -59,15 +40,6 @@ export function createCarColumns({
       width: 104,
       textAlign: "center",
       pinned: "left",
-      filter: (
-        <GridSelectFilter
-          label="Фото"
-          value={filters.photo}
-          options={PHOTO_FILTER_OPTIONS}
-          onChange={(value) => updateFilter("photo", value)}
-        />
-      ),
-      filtering: filters.photo !== "all",
       render: (car) => (
         <GridPhotoCell
           src={car.thumbnailUrl}
@@ -84,14 +56,6 @@ export function createCarColumns({
       sortable: true,
       resizable: true,
       pinnable: true,
-      filter: (
-        <GridTextFilter
-          label="Марка"
-          value={filters.brand}
-          onChange={(value) => updateFilter("brand", value)}
-        />
-      ),
-      filtering: filters.brand.trim() !== "",
       render: (car) => (
         <Text size="sm" fw={600} textWrap="nowrap">
           {car.brand}
@@ -105,14 +69,6 @@ export function createCarColumns({
       sortable: true,
       resizable: true,
       draggable: true,
-      filter: (
-        <GridTextFilter
-          label="Модель или ID"
-          value={filters.model}
-          onChange={(value) => updateFilter("model", value)}
-        />
-      ),
-      filtering: filters.model.trim() !== "",
       render: (car) =>
         onEdit ? (
           <UnstyledButton
@@ -137,15 +93,6 @@ export function createCarColumns({
       resizable: true,
       draggable: true,
       toggleable: true,
-      filter: (
-        <GridSelectFilter
-          label="Год"
-          value={filters.year}
-          options={yearOptions}
-          onChange={(value) => updateFilter("year", value)}
-        />
-      ),
-      filtering: filters.year !== "all",
     },
     {
       accessor: "country",
@@ -156,15 +103,6 @@ export function createCarColumns({
       resizable: true,
       draggable: true,
       toggleable: true,
-      filter: (
-        <GridSelectFilter
-          label="Страна"
-          value={filters.country}
-          options={COUNTRY_FILTER_OPTIONS}
-          onChange={(value) => updateFilter("country", value)}
-        />
-      ),
-      filtering: filters.country !== "all",
       render: (car) => (
         <Tooltip label={COUNTRY_LABELS[car.country]} withArrow>
           <CountryFlag country={car.country} />
@@ -180,15 +118,6 @@ export function createCarColumns({
       draggable: true,
       toggleable: true,
       textAlign: "right",
-      filter: (
-        <GridSelectFilter
-          label="Цена"
-          value={filters.price}
-          options={PRICE_FILTER_OPTIONS}
-          onChange={(value) => updateFilter("price", value)}
-        />
-      ),
-      filtering: filters.price !== "all",
       render: (car) =>
         car.priceRub === null ? (
           <Text size="sm" c="dimmed">
@@ -222,15 +151,6 @@ export function createCarColumns({
       resizable: true,
       draggable: true,
       toggleable: true,
-      filter: (
-        <GridSelectFilter
-          label="Публикация"
-          value={filters.publication}
-          options={PUBLICATION_FILTER_OPTIONS}
-          onChange={(value) => updateFilter("publication", value)}
-        />
-      ),
-      filtering: filters.publication !== "all",
       render: (car) => (
         <Badge
           color={car.publicationStatus === "published" ? "green" : "gray"}
@@ -249,15 +169,6 @@ export function createCarColumns({
       resizable: true,
       draggable: true,
       toggleable: true,
-      filter: (
-        <GridSelectFilter
-          label="Ответственный"
-          value={filters.manager}
-          options={managerOptions}
-          onChange={(value) => updateFilter("manager", value)}
-        />
-      ),
-      filtering: filters.manager !== "all",
       render: (car) => <GridPersonCell name={car.managerName} />,
     },
     {

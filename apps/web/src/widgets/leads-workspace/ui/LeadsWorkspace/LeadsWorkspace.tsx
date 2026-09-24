@@ -1,126 +1,110 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Button, Paper, Stack, Text } from "@mantine/core";
-import { useLocalStorage } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons-react";
+import {
+  Button,
+  Checkbox,
+  Paper,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
 import {
   DataTable,
   useDataTableColumns,
   type DataTableSortStatus,
 } from "mantine-datatable";
-import type { Lead } from "@/entities/lead";
-import {
-  GRID_PAGE_SIZE_OPTIONS,
-  type GridDensity,
-} from "@/shared/lib/grid-options";
+import { LEAD_STATUS_OPTIONS, type Lead } from "@/entities/lead";
+import { GRID_PAGE_SIZE_OPTIONS } from "@/shared/lib/grid-options";
 import { showActionSuccess } from "@/shared/lib/show-action-notification";
 import { GridTableToolbar } from "@/shared/ui/GridTableToolbar";
 import { AdminPageHeader } from "@/shared/ui/AdminPageHeader";
+import { createLeadColumns } from "../../lib/create-lead-columns";
 import {
-  createLeadColumns,
+  EMPTY_LEAD_FILTERS,
+  filterLeads,
+  isLeadOverdue,
   type LeadFilters,
-} from "../../lib/create-lead-columns";
+} from "../../lib/filter-leads";
 import { DEMO_LEADS, DEMO_LEAD_MANAGERS } from "../../lib/stories/leads-demo";
 import {
   LEADS_COLUMN_LABELS,
   LEADS_COLUMNS_STORAGE_KEY,
-  LEADS_DENSITY_STORAGE_KEY,
+  LEAD_COUNTRY_OPTIONS,
+  LEAD_SOURCE_OPTIONS,
 } from "../../model/leads-options";
 import { LeadDetailsDrawer } from "../LeadDetailsDrawer";
 import classes from "./LeadsWorkspace.module.css";
 
-const INITIAL_FILTERS: LeadFilters = {
-  client: "",
-  phone: "",
-  status: "all",
-  country: "all",
-  manager: "all",
-  subject: "",
+type LeadsWorkspaceProps = {
+  initialFilters?: Partial<LeadFilters>;
+  initialSelectedLeadId?: string;
+  managerOptions?: { value: string; label: string }[];
 };
 
-export function LeadsWorkspace() {
+export function LeadsWorkspace({
+  initialFilters,
+  initialSelectedLeadId,
+  managerOptions = DEMO_LEAD_MANAGERS,
+}: LeadsWorkspaceProps = {}) {
   const [leads, setLeads] = useState(DEMO_LEADS);
-  const [filters, setFilters] = useState(INITIAL_FILTERS);
-  const [selected, setSelected] = useState<Lead | null>(null);
+  const [filters, setFilters] = useState<LeadFilters>({
+    ...EMPTY_LEAD_FILTERS,
+    ...initialFilters,
+  });
+  const [selected, setSelected] = useState<Lead | null>(
+    DEMO_LEADS.find((lead) => lead.id === initialSelectedLeadId) ?? null,
+  );
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Lead>>({
     columnAccessor: "createdAt",
     direction: "desc",
   });
-  const [density, setDensity] = useLocalStorage<GridDensity>({
-    key: LEADS_DENSITY_STORAGE_KEY,
-    defaultValue: "normal",
-  });
   const filtered = useMemo(
     () =>
-      leads
-        .filter(
-          (lead) =>
-            lead.clientName
-              .toLocaleLowerCase("ru-RU")
-              .includes(filters.client.toLocaleLowerCase("ru-RU")) &&
-            lead.phone
-              .replace(/\D/g, "")
-              .includes(filters.phone.replace(/\D/g, "")) &&
-            lead.subject
-              .toLocaleLowerCase("ru-RU")
-              .includes(filters.subject.toLocaleLowerCase("ru-RU")) &&
-            (filters.status === "all" || lead.status === filters.status) &&
-            (filters.country === "all" || lead.country === filters.country) &&
-            (filters.manager === "all" ||
-              (filters.manager === "none"
-                ? !lead.managerName
-                : lead.managerName === filters.manager)),
-        )
-        .sort((a, b) => {
-          const left = String(a[sortStatus.columnAccessor as keyof Lead] ?? "");
-          const right = String(
-            b[sortStatus.columnAccessor as keyof Lead] ?? "",
-          );
-          const result = left.localeCompare(right, "ru-RU", { numeric: true });
-          return sortStatus.direction === "asc" ? result : -result;
-        }),
+      filterLeads(leads, filters).sort((a, b) => {
+        const left = String(a[sortStatus.columnAccessor as keyof Lead] ?? "");
+        const right = String(b[sortStatus.columnAccessor as keyof Lead] ?? "");
+        const result = left.localeCompare(right, "ru-RU", { numeric: true });
+        return sortStatus.direction === "asc" ? result : -result;
+      }),
     [leads, filters, sortStatus],
   );
-  const columns = useMemo(
-    () =>
-      createLeadColumns({
-        filters,
-        managerOptions: DEMO_LEAD_MANAGERS,
-        updateFilter: (key, value) => {
-          setFilters((current) => ({ ...current, [key]: value }));
-          setPage(1);
-        },
-        onOpen: setSelected,
-      }),
-    [filters],
-  );
+  const columns = useMemo(() => createLeadColumns(), []);
   const tableColumns = useDataTableColumns({
     key: LEADS_COLUMNS_STORAGE_KEY,
     columns,
   });
   const hasFilters = Object.entries(filters).some(
-    ([key, value]) => value !== INITIAL_FILTERS[key as keyof LeadFilters],
+    ([key, value]) => value !== EMPTY_LEAD_FILTERS[key as keyof LeadFilters],
   );
+  function updateFilter<Key extends keyof LeadFilters>(
+    key: Key,
+    value: LeadFilters[Key],
+  ) {
+    setFilters((current) => ({ ...current, [key]: value }));
+    setPage(1);
+  }
   function resetView() {
     tableColumns.resetColumnsToggle();
     tableColumns.resetColumnsOrder();
     tableColumns.resetColumnsWidth();
     tableColumns.resetColumnsPinning();
-    setDensity("normal");
   }
-  function save(lead: Lead) {
-    const isNew = lead.id.startsWith("new-");
-    const saved = isNew ? { ...lead, id: `L-${1043 + leads.length}` } : lead;
-    setLeads((current) =>
-      isNew
-        ? [saved, ...current]
-        : current.map((item) => (item.id === saved.id ? saved : item)),
-    );
+  function create(lead: Lead) {
+    const saved = { ...lead, id: `L-${1043 + leads.length}` };
+    setLeads((current) => [saved, ...current]);
     setSelected(null);
-    showActionSuccess(isNew ? "Заявка создана" : "Заявка сохранена");
+    showActionSuccess("Заявка создана");
+  }
+  function update(lead: Lead) {
+    setLeads((current) =>
+      current.map((item) => (item.id === lead.id ? lead : item)),
+    );
+    setSelected(lead);
   }
   function createLead() {
     const createdAt = new Date().toISOString();
@@ -136,13 +120,21 @@ export function LeadsWorkspace() {
       country: null,
       subject: "",
       message: "",
+      vehicleQuery: null,
+      vehicleType: null,
+      condition: null,
       budgetRub: null,
+      deliveryCity: null,
+      purchaseTiming: null,
+      wishes: null,
+      preferredContactMethod: null,
       managerName: null,
       managerAvatarUrl: null,
       nextActionAt: null,
       pageUrl: "",
       carLabel: null,
       calculationId: null,
+      utm: null,
       notes: [],
     });
   }
@@ -160,16 +152,77 @@ export function LeadsWorkspace() {
           }
         />
         <Paper withBorder radius="lg" className={classes.paper}>
+          <div className={classes.filters}>
+            <TextInput
+              className={classes.search}
+              size="sm"
+              placeholder="Клиент, телефон, автомобиль или номер"
+              aria-label="Поиск заявок"
+              leftSection={<IconSearch size={16} aria-hidden="true" />}
+              value={filters.search}
+              onChange={(event) => updateFilter("search", event.target.value)}
+            />
+            <Select
+              size="sm"
+              aria-label="Статус"
+              data={[
+                { value: "all", label: "Все статусы" },
+                ...LEAD_STATUS_OPTIONS,
+              ]}
+              value={filters.status}
+              allowDeselect={false}
+              onChange={(value) => updateFilter("status", value ?? "all")}
+            />
+            <Select
+              size="sm"
+              aria-label="Ответственный"
+              data={[
+                { value: "all", label: "Все ответственные" },
+                { value: "none", label: "Не назначен" },
+                ...managerOptions,
+              ]}
+              value={filters.manager}
+              allowDeselect={false}
+              onChange={(value) => updateFilter("manager", value ?? "all")}
+            />
+            <Select
+              size="sm"
+              aria-label="Источник"
+              data={[
+                { value: "all", label: "Все источники" },
+                ...LEAD_SOURCE_OPTIONS,
+              ]}
+              value={filters.source}
+              allowDeselect={false}
+              onChange={(value) => updateFilter("source", value ?? "all")}
+            />
+            <Select
+              size="sm"
+              aria-label="Страна"
+              data={[
+                { value: "all", label: "Все страны" },
+                ...LEAD_COUNTRY_OPTIONS,
+              ]}
+              value={filters.country}
+              allowDeselect={false}
+              onChange={(value) => updateFilter("country", value ?? "all")}
+            />
+            <Checkbox
+              className={classes.overdueFilter}
+              label="Только просроченные"
+              checked={filters.overdueOnly}
+              onChange={(event) =>
+                updateFilter("overdueOnly", event.currentTarget.checked)
+              }
+            />
+          </div>
           <div className={classes.toolbar}>
             <GridTableToolbar
-              count={filtered.length}
               hasFilters={hasFilters}
               onResetFilters={() => {
-                setFilters(INITIAL_FILTERS);
+                setFilters(EMPTY_LEAD_FILTERS);
                 setPage(1);
               }}
-              density={density}
-              onDensityChange={setDensity}
               columnsToggle={tableColumns.columnsToggle}
               onColumnsToggleChange={tableColumns.setColumnsToggle}
               onResetView={resetView}
@@ -184,8 +237,8 @@ export function LeadsWorkspace() {
             sortStatus={sortStatus}
             onSortStatusChange={setSortStatus}
             highlightOnHover
-            verticalSpacing={density === "compact" ? "xs" : "sm"}
-            horizontalSpacing={density === "compact" ? "sm" : "md"}
+            verticalSpacing="xs"
+            horizontalSpacing="sm"
             minHeight={filtered.length === 0 ? 280 : undefined}
             page={page}
             onPageChange={setPage}
@@ -201,6 +254,15 @@ export function LeadsWorkspace() {
               `${from}–${to} из ${totalRecords}`
             }
             onRowClick={({ record }) => setSelected(record)}
+            rowClassName={(record) =>
+              [
+                classes.clickableRow,
+                record.status === "new" ? classes.newRow : "",
+                isLeadOverdue(record) ? classes.overdueRow : "",
+              ]
+                .filter(Boolean)
+                .join(" ")
+            }
             emptyState={
               <Stack align="center" gap="xs" py="xl">
                 <Text fw={600}>
@@ -210,7 +272,7 @@ export function LeadsWorkspace() {
                   <Button
                     variant="subtle"
                     size="sm"
-                    onClick={() => setFilters(INITIAL_FILTERS)}
+                    onClick={() => setFilters(EMPTY_LEAD_FILTERS)}
                   >
                     Сбросить фильтры
                   </Button>
@@ -222,12 +284,13 @@ export function LeadsWorkspace() {
       </Stack>
       {selected && (
         <LeadDetailsDrawer
-          key={`${selected.id}-${selected.updatedAt}`}
+          key={selected.id}
           lead={selected}
           opened
-          managerOptions={DEMO_LEAD_MANAGERS}
+          managerOptions={managerOptions}
           onClose={() => setSelected(null)}
-          onSave={save}
+          onChange={update}
+          onCreate={create}
         />
       )}
     </section>

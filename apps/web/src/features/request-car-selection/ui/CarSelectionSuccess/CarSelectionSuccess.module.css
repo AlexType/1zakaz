@@ -1,0 +1,27 @@
+.summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 var(--mantine-spacing-lg);
+  margin: 0;
+}
+
+.summaryItem {
+  padding-block: 7px;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.summaryItem:last-child {
+  border-bottom: 0;
+}
+
+.summaryItem dt,
+.summaryItem dd {
+  margin: 0;
+}
+
+@media (min-width: 48em) {
+  .summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--mantine-spacing-xl);
+  }
+}

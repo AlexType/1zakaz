@@ -1,187 +1,118 @@
-import { ActionIcon, Badge, Text, Tooltip } from "@mantine/core";
-import { IconChevronRight } from "@tabler/icons-react";
+import { Badge, Stack, Text } from "@mantine/core";
 import type { DataTableColumn } from "mantine-datatable";
-import { COUNTRY_LABELS, CountryFlag } from "@/entities/car";
+import { COUNTRY_LABELS } from "@/entities/car";
 import {
   LEAD_STATUS_COLORS,
   LEAD_STATUS_LABELS,
-  LEAD_STATUS_OPTIONS,
   type Lead,
 } from "@/entities/lead";
 import { formatCompactDateTime } from "@/shared/lib/format-compact-date";
 import { formatRubles } from "@/shared/lib/format-rubles";
 import { formatRussianPhone } from "@/shared/lib/format-russian-phone";
 import { GridPersonCell } from "@/shared/ui/GridPersonCell";
-import { GridSelectFilter, GridTextFilter } from "@/shared/ui/GridColumnFilter";
+import { LEAD_VEHICLE_TYPE_LABELS } from "../model/leads-options";
+import { isLeadOverdue } from "./filter-leads";
 
-export type LeadFilters = {
-  client: string;
-  phone: string;
-  status: string;
-  country: string;
-  manager: string;
-  subject: string;
-};
-type Options = {
-  filters: LeadFilters;
-  managerOptions: { value: string; label: string }[];
-  updateFilter: (key: keyof LeadFilters, value: string) => void;
-  onOpen: (lead: Lead) => void;
-};
+function getLeadRequestTitle(lead: Lead) {
+  return (
+    lead.vehicleQuery ||
+    lead.carLabel ||
+    (lead.vehicleType ? LEAD_VEHICLE_TYPE_LABELS[lead.vehicleType] : null) ||
+    lead.subject
+  );
+}
 
-export function createLeadColumns({
-  filters,
-  managerOptions,
-  updateFilter,
-  onOpen,
-}: Options): DataTableColumn<Lead>[] {
+export function createLeadColumns(): DataTableColumn<Lead>[] {
   return [
     {
       accessor: "id",
-      title: "Номер",
-      width: 100,
+      title: "№",
+      width: 90,
       pinned: "left",
       sortable: true,
       render: (lead) => (
-        <Text size="sm" fw={600}>
-          {lead.id}
+        <Text size="sm" fw={lead.status === "new" ? 700 : 600}>
+          {lead.id.replace("L-", "")}
         </Text>
       ),
     },
     {
       accessor: "createdAt",
       title: "Создана",
-      width: 155,
+      width: 145,
       sortable: true,
       resizable: true,
-      render: (lead) => formatCompactDateTime(lead.createdAt),
-    },
-    {
-      accessor: "clientName",
-      title: "Клиент",
-      width: 180,
-      sortable: true,
-      resizable: true,
-      filter: (
-        <GridTextFilter
-          label="Клиент"
-          value={filters.client}
-          onChange={(value) => updateFilter("client", value)}
-        />
-      ),
-      filtering: Boolean(filters.client.trim()),
       render: (lead) => (
-        <Text size="sm" fw={600} textWrap="nowrap">
-          {lead.clientName}
+        <Text size="sm" textWrap="nowrap">
+          {formatCompactDateTime(lead.createdAt)}
         </Text>
       ),
     },
     {
-      accessor: "phone",
-      title: "Телефон",
-      width: 170,
-      resizable: true,
-      filter: (
-        <GridTextFilter
-          label="Телефон"
-          value={filters.phone}
-          onChange={(value) => updateFilter("phone", value)}
-        />
-      ),
-      filtering: Boolean(filters.phone.trim()),
-      render: (lead) => (
-        <Text
-          component="a"
-          href={`tel:${lead.phone.replace(/\D/g, "")}`}
-          size="sm"
-          c="inherit"
-          textWrap="nowrap"
-        >
-          {formatRussianPhone(lead.phone)}
-        </Text>
-      ),
-    },
-    {
-      accessor: "subject",
-      title: "Обращение",
-      width: 230,
-      resizable: true,
-      filter: (
-        <GridTextFilter
-          label="Обращение"
-          value={filters.subject}
-          onChange={(value) => updateFilter("subject", value)}
-        />
-      ),
-      filtering: Boolean(filters.subject.trim()),
-      render: (lead) => (
-        <div>
-          <Text size="sm" fw={500}>
-            {lead.subject}
-          </Text>
-          <Text size="xs" c="dimmed">
-            {lead.source}
-          </Text>
-        </div>
-      ),
-    },
-    {
-      accessor: "country",
-      title: "Страна",
-      width: 105,
-      textAlign: "center",
+      accessor: "client",
+      sortKey: "clientName",
+      title: "Клиент и телефон",
+      width: 210,
       sortable: true,
-      filter: (
-        <GridSelectFilter
-          label="Страна"
-          value={filters.country}
-          options={[
-            { value: "all", label: "Все" },
-            { value: "japan", label: "Япония" },
-            { value: "china", label: "Китай" },
-            { value: "korea", label: "Корея" },
-          ]}
-          onChange={(value) => updateFilter("country", value)}
-        />
+      resizable: true,
+      render: (lead) => (
+        <Stack gap={2}>
+          <Text size="sm" fw={600} lineClamp={1}>
+            {lead.clientName}
+          </Text>
+          <Text
+            component="a"
+            href={`tel:${lead.phone.replace(/\D/g, "")}`}
+            size="xs"
+            c="dimmed"
+            textWrap="nowrap"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {formatRussianPhone(lead.phone)}
+          </Text>
+        </Stack>
       ),
-      filtering: filters.country !== "all",
-      render: (lead) =>
-        lead.country ? (
-          <Tooltip label={COUNTRY_LABELS[lead.country]}>
-            <CountryFlag country={lead.country} />
-          </Tooltip>
-        ) : (
-          <Text c="dimmed">—</Text>
-        ),
+    },
+    {
+      accessor: "request",
+      sortKey: "subject",
+      title: "Запрос",
+      width: 300,
+      sortable: true,
+      resizable: true,
+      render: (lead) => (
+        <Stack gap={2}>
+          <Text size="sm" fw={500} lineClamp={1}>
+            {getLeadRequestTitle(lead)}
+          </Text>
+          <Text size="xs" c="dimmed" lineClamp={1}>
+            {[lead.country ? COUNTRY_LABELS[lead.country] : null, lead.source]
+              .filter(Boolean)
+              .join(" · ")}
+          </Text>
+        </Stack>
+      ),
     },
     {
       accessor: "budgetRub",
       title: "Бюджет",
-      width: 145,
+      width: 140,
       textAlign: "right",
       sortable: true,
       render: (lead) =>
         lead.budgetRub ? (
-          formatRubles(lead.budgetRub)
+          <Text size="sm" textWrap="nowrap">
+            {formatRubles(lead.budgetRub)}
+          </Text>
         ) : (
           <Text c="dimmed">—</Text>
         ),
     },
     {
       accessor: "status",
-      title: "Состояние",
-      width: 155,
-      textAlign: "center",
+      title: "Статус",
+      width: 165,
       sortable: true,
-      filter: (
-        <GridSelectFilter
-          label="Состояние"
-          value={filters.status}
-          options={[{ value: "all", label: "Все" }, ...LEAD_STATUS_OPTIONS]}
-          onChange={(value) => updateFilter("status", value)}
-        />
-      ),
-      filtering: filters.status !== "all",
       render: (lead) => (
         <Badge variant="light" color={LEAD_STATUS_COLORS[lead.status]}>
           {LEAD_STATUS_LABELS[lead.status]}
@@ -191,22 +122,9 @@ export function createLeadColumns({
     {
       accessor: "managerName",
       title: "Ответственный",
-      width: 190,
+      width: 185,
       sortable: true,
       resizable: true,
-      filter: (
-        <GridSelectFilter
-          label="Ответственный"
-          value={filters.manager}
-          options={[
-            { value: "all", label: "Все" },
-            { value: "none", label: "Не назначен" },
-            ...managerOptions,
-          ]}
-          onChange={(value) => updateFilter("manager", value)}
-        />
-      ),
-      filtering: filters.manager !== "all",
       render: (lead) => (
         <GridPersonCell
           name={lead.managerName}
@@ -217,32 +135,29 @@ export function createLeadColumns({
     {
       accessor: "nextActionAt",
       title: "Следующее действие",
-      width: 175,
-      textAlign: "right",
+      width: 180,
       sortable: true,
-      render: (lead) =>
-        lead.nextActionAt ? (
-          formatCompactDateTime(lead.nextActionAt)
-        ) : (
-          <Text c="dimmed">—</Text>
-        ),
-    },
-    {
-      accessor: "actions",
-      title: "",
-      width: 62,
-      textAlign: "center",
-      pinned: "right",
-      render: (lead) => (
-        <ActionIcon
-          variant="subtle"
-          color="gray"
-          aria-label={`Открыть заявку ${lead.id}`}
-          onClick={() => onOpen(lead)}
-        >
-          <IconChevronRight size={18} />
-        </ActionIcon>
-      ),
+      render: (lead) => {
+        if (!lead.nextActionAt) return <Text c="dimmed">—</Text>;
+        const overdue = isLeadOverdue(lead);
+        return (
+          <Stack gap={2}>
+            <Text
+              size="sm"
+              fw={overdue ? 600 : undefined}
+              c={overdue ? "red.7" : undefined}
+              textWrap="nowrap"
+            >
+              {formatCompactDateTime(lead.nextActionAt)}
+            </Text>
+            {overdue && (
+              <Text size="xs" c="red.7">
+                Просрочено
+              </Text>
+            )}
+          </Stack>
+        );
+      },
     },
   ];
 }

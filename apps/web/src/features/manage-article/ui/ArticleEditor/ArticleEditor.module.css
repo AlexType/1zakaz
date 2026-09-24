@@ -1,16 +1,201 @@
-.cover {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--mantine-radius-md);
-  overflow: hidden;
+.root {
+  min-height: 100%;
+  background: var(--mantine-color-body);
 }
-.emptyCover {
+
+.topbar {
+  position: sticky;
+  z-index: 20;
+  top: var(--app-shell-header-offset, 0px);
+  padding: 0.65rem clamp(1rem, 2vw, 1.75rem);
+  background: color-mix(in srgb, var(--mantine-color-body) 94%, transparent);
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  backdrop-filter: blur(12px);
+}
+
+.topbarLead {
+  min-width: 0;
+}
+
+.saveStatus {
+  min-width: 86px;
+}
+
+.layout {
   display: grid;
-  place-items: center;
+  grid-template-columns: minmax(0, 820px) 300px;
+  justify-content: center;
+  gap: clamp(2rem, 4vw, 4.5rem);
+  padding: 2.25rem clamp(1rem, 3vw, 3rem) 5rem;
+}
+
+.canvas {
+  min-width: 0;
+  overflow-anchor: none;
+}
+
+.titleInput {
+  field-sizing: content;
+  min-height: 1.2em;
+  padding: 0;
+  overflow: hidden;
+  font-weight: 750;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  resize: none;
+  background: transparent;
+  border: 0;
+}
+
+.titleInput:focus {
+  border: 0;
+}
+
+.excerptInput {
+  margin-top: 0.9rem;
+  padding: 0;
+  color: var(--mantine-color-dimmed);
+  font-size: 1.1rem;
+  line-height: 1.55;
+  background: transparent;
+  border: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.excerptInput:focus {
+  border: 0;
+}
+
+.coverSection {
+  display: grid;
+  gap: 0.75rem;
+  margin-block: 1.75rem 2rem;
+}
+
+.coverWrap {
+  position: relative;
+}
+
+.cover,
+.previewCover,
+.emptyCover {
+  box-sizing: border-box;
   width: 100%;
   aspect-ratio: 16 / 9;
-  color: var(--mantine-color-dimmed);
+  overflow: hidden;
+  border-radius: var(--mantine-radius-lg);
+}
+
+.coverActions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.coverWrap:hover .coverActions,
+.coverWrap:focus-within .coverActions {
+  opacity: 1;
+}
+
+.emptyCover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--mantine-color-gray-6);
+  font: inherit;
   background: var(--mantine-color-gray-0);
   border: 1px dashed var(--mantine-color-gray-4);
-  border-radius: var(--mantine-radius-md);
+  border-radius: var(--mantine-radius-lg);
+  cursor: pointer;
+}
+
+.emptyCover:hover {
+  color: var(--mantine-color-blue-7);
+  background: var(--mantine-color-blue-0);
+  border-color: var(--mantine-color-blue-4);
+}
+
+.aside {
+  position: sticky;
+  top: calc(var(--app-shell-header-offset, 0px) + 0.75rem);
+  align-self: start;
+  max-height: calc(100dvh - var(--app-shell-header-offset, 0px) - 1.5rem);
+  padding-left: 1.25rem;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  border-left: 1px solid var(--mantine-color-gray-2);
+}
+
+.preview {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 820px;
+  margin-inline: auto;
+  padding: 3rem 1rem 6rem;
+}
+
+.previewTitle {
+  max-width: 760px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  text-wrap: pretty;
+}
+
+.previewExcerpt {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 62em) {
+  .layout {
+    display: block;
+    padding-top: 1.5rem;
+  }
+
+  .canvas {
+    max-width: 820px;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 40em) {
+  .topbar {
+    padding-inline: 0.65rem;
+  }
+
+  .backLabel,
+  .saveStatus {
+    display: none;
+  }
+
+  .layout {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  .titleInput {
+    font-size: 2rem;
+  }
+
+  .excerptInput {
+    font-size: 1rem;
+  }
+
+  .coverActions {
+    opacity: 1;
+  }
+
+  .preview {
+    padding-top: 1.5rem;
+  }
 }

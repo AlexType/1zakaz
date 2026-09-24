@@ -1,25 +1,22 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { Button, Paper, Stack, Text } from "@mantine/core";
-import { useLocalStorage } from "@mantine/hooks";
+import { Button, Paper, Select, Stack, Text, TextInput } from "@mantine/core";
 import {
   DataTable,
   useDataTableColumns,
   type DataTableSortStatus,
 } from "mantine-datatable";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
 import type {
   Article,
   ArticleCategory,
   ArticleStatus,
 } from "@/entities/article";
-import {
-  GRID_PAGE_SIZE_OPTIONS,
-  type GridDensity,
-} from "@/shared/lib/grid-options";
+import { GRID_PAGE_SIZE_OPTIONS } from "@/shared/lib/grid-options";
 import { GridTableToolbar } from "@/shared/ui/GridTableToolbar";
 import { GridErrorState } from "@/shared/ui/GridErrorState";
+import { GridFiltersBar } from "@/shared/ui/GridFiltersBar";
 import { PhotoLightbox } from "@/shared/ui/PhotoLightbox";
 import { AdminPageHeader } from "@/shared/ui/AdminPageHeader";
 import {
@@ -29,7 +26,8 @@ import {
 import {
   ARTICLE_COLUMN_LABELS,
   ARTICLE_COLUMNS_STORAGE_KEY,
-  ARTICLE_DENSITY_STORAGE_KEY,
+  ARTICLE_PHOTO_FILTER_OPTIONS,
+  ARTICLE_STATUS_FILTER_OPTIONS,
 } from "../../model/article-options";
 import classes from "./ArticleList.module.css";
 
@@ -68,10 +66,6 @@ export function ArticleList({
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Article>>({
     columnAccessor: "updatedAt",
     direction: "desc",
-  });
-  const [density, setDensity] = useLocalStorage<GridDensity>({
-    key: ARTICLE_DENSITY_STORAGE_KEY,
-    defaultValue: "normal",
   });
   const [previewArticle, setPreviewArticle] = useState<Article | null>(null);
   const hasFilters = Object.entries(filters).some(
@@ -123,15 +117,12 @@ export function ArticleList({
   const columns = useMemo(
     () =>
       createArticleColumns({
-        filters,
         categories,
-        authorOptions,
-        updateFilter,
         onEdit,
         onSetStatus,
         onPreviewPhoto: setPreviewArticle,
       }),
-    [filters, categories, authorOptions, updateFilter, onEdit, onSetStatus],
+    [categories, onEdit, onSetStatus],
   );
   const {
     effectiveColumns,
@@ -147,7 +138,6 @@ export function ArticleList({
     resetColumnsOrder();
     resetColumnsWidth();
     resetColumnsPinning();
-    setDensity("normal");
   }
   return (
     <section className={classes.root} aria-label="Лента статей">
@@ -165,27 +155,71 @@ export function ArticleList({
           withBorder
           radius="lg"
           className={classes.paper}
-          data-grid-density={density}
+          data-grid-density="compact"
         >
           {!error && (
-            <div className={classes.toolbar}>
-              <GridTableToolbar
-                count={filtered.length}
-                loading={loading}
-                loadingLabel="Загружаем статьи…"
-                hasFilters={hasFilters}
-                onResetFilters={() => {
-                  setFilters(INITIAL_FILTERS);
-                  setPage(1);
-                }}
-                density={density}
-                onDensityChange={setDensity}
-                columnsToggle={columnsToggle}
-                onColumnsToggleChange={setColumnsToggle}
-                onResetView={resetView}
-                columnLabels={ARTICLE_COLUMN_LABELS}
-              />
-            </div>
+            <>
+              <GridFiltersBar>
+                <TextInput
+                  aria-label="Поиск статей"
+                  placeholder="Название статьи"
+                  leftSection={<IconSearch size={16} />}
+                  value={filters.title}
+                  onChange={(event) =>
+                    updateFilter("title", event.currentTarget.value)
+                  }
+                />
+                <Select
+                  aria-label="Рубрика"
+                  data={[
+                    { value: "all", label: "Все рубрики" },
+                    ...categories.map(({ id, name }) => ({
+                      value: id,
+                      label: name,
+                    })),
+                  ]}
+                  value={filters.category}
+                  allowDeselect={false}
+                  onChange={(value) => updateFilter("category", value ?? "all")}
+                />
+                <Select
+                  aria-label="Статус публикации"
+                  data={ARTICLE_STATUS_FILTER_OPTIONS}
+                  value={filters.status}
+                  allowDeselect={false}
+                  onChange={(value) => updateFilter("status", value ?? "all")}
+                />
+                <Select
+                  aria-label="Автор"
+                  data={authorOptions}
+                  value={filters.author}
+                  allowDeselect={false}
+                  onChange={(value) => updateFilter("author", value ?? "all")}
+                />
+                <Select
+                  aria-label="Обложка"
+                  data={ARTICLE_PHOTO_FILTER_OPTIONS}
+                  value={filters.photo}
+                  allowDeselect={false}
+                  onChange={(value) => updateFilter("photo", value ?? "all")}
+                />
+              </GridFiltersBar>
+              <div className={classes.toolbar}>
+                <GridTableToolbar
+                  loading={loading}
+                  loadingLabel="Загружаем статьи…"
+                  hasFilters={hasFilters}
+                  onResetFilters={() => {
+                    setFilters(INITIAL_FILTERS);
+                    setPage(1);
+                  }}
+                  columnsToggle={columnsToggle}
+                  onColumnsToggleChange={setColumnsToggle}
+                  onResetView={resetView}
+                  columnLabels={ARTICLE_COLUMN_LABELS}
+                />
+              </div>
+            </>
           )}
           {error ? (
             <GridErrorState
@@ -201,8 +235,8 @@ export function ArticleList({
               storeColumnsKey={ARTICLE_COLUMNS_STORAGE_KEY}
               sortStatus={sortStatus}
               onSortStatusChange={setSortStatus}
-              horizontalSpacing={density === "compact" ? "sm" : "md"}
-              verticalSpacing={density === "compact" ? "xs" : "sm"}
+              horizontalSpacing="sm"
+              verticalSpacing="xs"
               highlightOnHover
               fetching={loading}
               loadingText="Загружаем статьи…"

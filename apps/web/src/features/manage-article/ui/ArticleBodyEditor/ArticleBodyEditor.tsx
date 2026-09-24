@@ -1,26 +1,34 @@
 "use client";
 
-import type { JSONContent } from "@tiptap/react";
-import { RichTextContentEditor } from "@/shared/ui/RichTextContentEditor";
+import dynamic from "next/dynamic";
+import { Skeleton, Stack } from "@mantine/core";
+import type { ArticleContent } from "@/entities/article";
+import type { UploadArticleImage } from "../../lib/mock-upload-article-image";
 
-type ArticleBodyEditorProps = {
-  initialValue: JSONContent;
-  onChange?: (value: JSONContent, hasText: boolean) => void;
+export type ArticleBodyEditorProps = {
+  initialValue: ArticleContent;
+  onChange?: (value: ArticleContent, hasContent: boolean) => void;
+  uploadImage: UploadArticleImage;
   readOnly?: boolean;
 };
 
-export function ArticleBodyEditor({
-  initialValue,
-  onChange,
-  readOnly = false,
-}: ArticleBodyEditorProps) {
-  return (
-    <RichTextContentEditor
-      initialValue={initialValue}
-      label="Текст статьи"
-      placeholder="Начните писать статью…"
-      onChange={onChange}
-      readOnly={readOnly}
-    />
-  );
+const ArticleBlockEditor = dynamic(
+  () =>
+    import("../ArticleBlockEditor/ArticleBlockEditor").then(
+      (module) => module.ArticleBlockEditor,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <Stack gap="sm" py="md">
+        <Skeleton height={22} width="75%" />
+        <Skeleton height={16} />
+        <Skeleton height={16} width="90%" />
+      </Stack>
+    ),
+  },
+);
+
+export function ArticleBodyEditor(props: ArticleBodyEditorProps) {
+  return <ArticleBlockEditor {...props} />;
 }

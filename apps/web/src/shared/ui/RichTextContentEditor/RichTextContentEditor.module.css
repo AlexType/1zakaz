@@ -9,3 +9,7 @@
   min-height: 320px;
   line-height: 1.65;
 }
+
+.editor[data-compact] :global(.tiptap) {
+  min-height: 130px;
+}

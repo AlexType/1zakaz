@@ -7,27 +7,26 @@ import {
   Group,
   Modal,
   Paper,
+  Select,
   Stack,
   Text,
+  TextInput,
 } from "@mantine/core";
-import { useLocalStorage } from "@mantine/hooks";
 import {
   DataTable,
   useDataTableColumns,
   type DataTableSortStatus,
 } from "mantine-datatable";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
 import type { StaffMember, StaffRole, StaffStatus } from "@/entities/employee";
 import {
   CreateInvitationForm,
   type CreateInvitation,
 } from "@/features/create-staff-invitation";
-import {
-  GRID_PAGE_SIZE_OPTIONS,
-  type GridDensity,
-} from "@/shared/lib/grid-options";
+import { GRID_PAGE_SIZE_OPTIONS } from "@/shared/lib/grid-options";
 import { GridTableToolbar } from "@/shared/ui/GridTableToolbar";
 import { GridErrorState } from "@/shared/ui/GridErrorState";
+import { GridFiltersBar } from "@/shared/ui/GridFiltersBar";
 import { AdminPageHeader } from "@/shared/ui/AdminPageHeader";
 import {
   showActionError,
@@ -41,8 +40,9 @@ import {
 import {
   STAFF_COLUMN_LABELS,
   STAFF_COLUMNS_STORAGE_KEY,
-  STAFF_DENSITY_STORAGE_KEY,
+  STAFF_ROLE_FILTER_OPTIONS,
   STAFF_ROLE_OPTIONS,
+  STAFF_STATUS_FILTER_OPTIONS,
 } from "../../model/staff-management-options";
 import classes from "./StaffManagement.module.css";
 
@@ -81,10 +81,6 @@ export function StaffManagement({
   const [sortStatus, setSortStatus] = useState<
     DataTableSortStatus<StaffMember>
   >({ columnAccessor: "name", direction: "asc" });
-  const [density, setDensity] = useLocalStorage<GridDensity>({
-    key: STAFF_DENSITY_STORAGE_KEY,
-    defaultValue: "normal",
-  });
   const [inviteOpen, setInviteOpen] = useState(false);
   const [pending, setPending] = useState<StaffAction | null>(null);
   const [busy, setBusy] = useState(false);
@@ -133,13 +129,11 @@ export function StaffManagement({
   const columns = useMemo(
     () =>
       createStaffColumns({
-        filters,
-        updateFilter,
         currentUserId,
         activeAdmins,
         onAction: setPending,
       }),
-    [filters, updateFilter, currentUserId, activeAdmins],
+    [currentUserId, activeAdmins],
   );
   const {
     effectiveColumns,
@@ -156,7 +150,6 @@ export function StaffManagement({
     resetColumnsOrder();
     resetColumnsWidth();
     resetColumnsPinning();
-    setDensity("normal");
   }
   async function confirmAction() {
     if (!pending) return;
@@ -191,24 +184,65 @@ export function StaffManagement({
         />
         <Paper withBorder radius="lg" className={classes.table}>
           {!error && (
-            <div className={classes.toolbar}>
-              <GridTableToolbar
-                count={filtered.length}
-                loading={loading}
-                loadingLabel="Загружаем сотрудников…"
-                hasFilters={hasFilters}
-                onResetFilters={() => {
-                  setFilters(INITIAL_FILTERS);
-                  setPage(1);
-                }}
-                density={density}
-                onDensityChange={setDensity}
-                columnsToggle={columnsToggle}
-                onColumnsToggleChange={setColumnsToggle}
-                onResetView={resetView}
-                columnLabels={STAFF_COLUMN_LABELS}
-              />
-            </div>
+            <>
+              <GridFiltersBar>
+                <TextInput
+                  aria-label="Поиск сотрудника"
+                  placeholder="Имя сотрудника"
+                  leftSection={<IconSearch size={16} />}
+                  value={filters.name}
+                  onChange={(event) =>
+                    updateFilter("name", event.currentTarget.value)
+                  }
+                />
+                <TextInput
+                  aria-label="Почта сотрудника"
+                  placeholder="Почта"
+                  value={filters.email}
+                  onChange={(event) =>
+                    updateFilter("email", event.currentTarget.value)
+                  }
+                />
+                <TextInput
+                  aria-label="Телефон сотрудника"
+                  placeholder="Телефон"
+                  inputMode="tel"
+                  value={filters.phone}
+                  onChange={(event) =>
+                    updateFilter("phone", event.currentTarget.value)
+                  }
+                />
+                <Select
+                  aria-label="Роль"
+                  data={STAFF_ROLE_FILTER_OPTIONS}
+                  value={filters.role}
+                  allowDeselect={false}
+                  onChange={(value) => updateFilter("role", value ?? "all")}
+                />
+                <Select
+                  aria-label="Доступ"
+                  data={STAFF_STATUS_FILTER_OPTIONS}
+                  value={filters.status}
+                  allowDeselect={false}
+                  onChange={(value) => updateFilter("status", value ?? "all")}
+                />
+              </GridFiltersBar>
+              <div className={classes.toolbar}>
+                <GridTableToolbar
+                  loading={loading}
+                  loadingLabel="Загружаем сотрудников…"
+                  hasFilters={hasFilters}
+                  onResetFilters={() => {
+                    setFilters(INITIAL_FILTERS);
+                    setPage(1);
+                  }}
+                  columnsToggle={columnsToggle}
+                  onColumnsToggleChange={setColumnsToggle}
+                  onResetView={resetView}
+                  columnLabels={STAFF_COLUMN_LABELS}
+                />
+              </div>
+            </>
           )}
           {error ? (
             <GridErrorState
@@ -224,8 +258,8 @@ export function StaffManagement({
               storeColumnsKey={STAFF_COLUMNS_STORAGE_KEY}
               sortStatus={sortStatus}
               onSortStatusChange={setSortStatus}
-              horizontalSpacing={density === "compact" ? "sm" : "md"}
-              verticalSpacing={density === "compact" ? "xs" : "sm"}
+              horizontalSpacing="sm"
+              verticalSpacing="xs"
               highlightOnHover
               fetching={loading}
               loadingText="Загружаем сотрудников…"

@@ -10,15 +10,24 @@ const flags: Record<CarCountry, string> = {
   korea: getPublicAssetPath("/flags/kr.svg"),
 };
 
-export function CountryFlag({ country }: { country: CarCountry }) {
+export function CountryFlag({
+  country,
+  decorative = false,
+}: {
+  country: CarCountry;
+  decorative?: boolean;
+}) {
   return (
     <Image
       src={flags[country]}
-      alt={COUNTRY_LABELS[country]}
+      alt={decorative ? "" : COUNTRY_LABELS[country]}
+      aria-hidden={decorative || undefined}
       w={26}
       h={20}
       fit="cover"
-      className={classes.flag}
+      className={
+        decorative ? `${classes.flag} ${classes.inline}` : classes.flag
+      }
     />
   );
 }

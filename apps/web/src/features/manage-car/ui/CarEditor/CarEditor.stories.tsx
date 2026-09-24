@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { fn } from "storybook/test";
+import { expect, fn, userEvent, within } from "storybook/test";
 import {
   demoBrands,
   demoCar,
@@ -61,4 +61,17 @@ export const SaveError: Story = {
       throw new Error("Mock API error");
     }),
   },
+};
+export const ValidationErrors: Story = {
+  name: "Ошибки валидации",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "Сохранить" }));
+    await expect(canvas.getByText("Выберите марку")).toBeVisible();
+  },
+};
+export const Mobile: Story = {
+  name: "Телефон",
+  args: { mode: "edit", initialValues: demoCar, initialPhotos: demoPhotos },
+  parameters: { viewport: { defaultViewport: "mobile1" } },
 };

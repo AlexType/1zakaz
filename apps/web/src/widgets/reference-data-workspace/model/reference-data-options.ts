@@ -55,4 +55,3 @@ export const REFERENCE_COLUMN_LABELS = {
 };
 
 export const REFERENCE_COLUMNS_STORAGE_KEY = "reference-data-columns-v1";
-export const REFERENCE_DENSITY_STORAGE_KEY = "reference-data-density-v1";

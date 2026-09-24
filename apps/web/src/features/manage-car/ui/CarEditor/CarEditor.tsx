@@ -32,6 +32,7 @@ import {
 } from "@/shared/lib/show-action-notification";
 import { useUnsavedChanges } from "@/shared/lib/use-unsaved-changes";
 import { EditorLayout } from "@/shared/ui/EditorLayout";
+import { RichTextContentEditor } from "@/shared/ui/RichTextContentEditor";
 import { UnsavedChangesModal } from "@/shared/ui/UnsavedChangesModal";
 import { useCarPhotos } from "../../lib/use-car-photos";
 import { carFormSchema } from "../../lib/validation";
@@ -57,7 +58,6 @@ import {
   YEAR_OPTIONS,
   type CarColor,
 } from "../../model/car-form-options";
-import { CarDescriptionEditor } from "../CarDescriptionEditor";
 import { CarPhotoEditor } from "../CarPhotoEditor";
 import classes from "./CarEditor.module.css";
 
@@ -459,9 +459,12 @@ export function CarEditor({
                   {...form.getInputProps("color")}
                 />
               </SimpleGrid>
-              <CarDescriptionEditor
-                value={form.getValues().description}
-                onChange={(html) => form.setFieldValue("description", html)}
+              <RichTextContentEditor
+                initialValue={form.getValues().description}
+                label="Описание"
+                placeholder="Особенности, комплектация, состояние автомобиля"
+                onHtmlChange={(html) => form.setFieldValue("description", html)}
+                compact
               />
             </Stack>
           </Paper>

@@ -3,19 +3,14 @@ import { IconLock, IconPencil } from "@tabler/icons-react";
 import type { DataTableColumn } from "mantine-datatable";
 import type { ReferenceEntry } from "@/entities/reference-entry";
 import { formatCompactDateTime } from "@/shared/lib/format-compact-date";
-import { GridSelectFilter, GridTextFilter } from "@/shared/ui/GridColumnFilter";
 
 export type ReferenceFilters = { name: string; code: string; active: string };
 
 type Options = {
-  filters: ReferenceFilters;
-  updateFilter: (key: keyof ReferenceFilters, value: string) => void;
   onEdit: (entry: ReferenceEntry) => void;
 };
 
 export function createReferenceColumns({
-  filters,
-  updateFilter,
   onEdit,
 }: Options): DataTableColumn<ReferenceEntry>[] {
   return [
@@ -24,14 +19,6 @@ export function createReferenceColumns({
       title: "Название",
       sortable: true,
       resizable: true,
-      filter: (
-        <GridTextFilter
-          label="Название"
-          value={filters.name}
-          onChange={(value) => updateFilter("name", value)}
-        />
-      ),
-      filtering: Boolean(filters.name.trim()),
       render: (entry) => (
         <Group gap="xs" wrap="nowrap">
           {entry.colorHex && (
@@ -64,14 +51,6 @@ export function createReferenceColumns({
       width: 170,
       sortable: true,
       resizable: true,
-      filter: (
-        <GridTextFilter
-          label="Код"
-          value={filters.code}
-          onChange={(value) => updateFilter("code", value)}
-        />
-      ),
-      filtering: Boolean(filters.code.trim()),
       render: (entry) => (
         <Text size="sm" ff="monospace">
           {entry.code}
@@ -104,19 +83,6 @@ export function createReferenceColumns({
       width: 130,
       textAlign: "center",
       sortable: true,
-      filter: (
-        <GridSelectFilter
-          label="Состояние"
-          value={filters.active}
-          options={[
-            { value: "all", label: "Все" },
-            { value: "active", label: "Активные" },
-            { value: "inactive", label: "Отключённые" },
-          ]}
-          onChange={(value) => updateFilter("active", value)}
-        />
-      ),
-      filtering: filters.active !== "all",
       render: (entry) => (
         <Badge variant="light" color={entry.active ? "green" : "gray"}>
           {entry.active ? "Активен" : "Отключён"}

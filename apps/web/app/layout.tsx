@@ -3,6 +3,7 @@ import { ColorSchemeScript, mantineHtmlProps } from "@mantine/core";
 import { MantineAppProvider } from "@/_app/mantine";
 import "@fontsource-variable/inter/wght.css";
 import "@mantine/core/styles.css";
+import "@blocknote/mantine/blocknoteStyles.css";
 import "@/_app/styles/globals.css";
 
 export const metadata: Metadata = {

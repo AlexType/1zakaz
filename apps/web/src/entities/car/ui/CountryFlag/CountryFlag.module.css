@@ -4,3 +4,8 @@
   border: 1px solid var(--mantine-color-gray-4);
   border-radius: 2px;
 }
+
+.inline {
+  flex: none;
+  margin-inline: 0;
+}

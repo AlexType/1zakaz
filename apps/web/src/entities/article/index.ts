@@ -1,1 +1,7 @@
-export type { Article, ArticleCategory, ArticleStatus } from "./model/article";
+export type {
+  Article,
+  ArticleCategory,
+  ArticleContent,
+  ArticleContentBlock,
+  ArticleStatus,
+} from "./model/article";

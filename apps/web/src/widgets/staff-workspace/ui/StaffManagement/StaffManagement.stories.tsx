@@ -46,3 +46,8 @@ export const LoadError: Story = {
     <StaffWorkspaceDemo error="Проверьте соединение и попробуйте ещё раз." />
   ),
 };
+export const Mobile: Story = {
+  name: "Телефон",
+  render: () => <StaffWorkspaceDemo />,
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};

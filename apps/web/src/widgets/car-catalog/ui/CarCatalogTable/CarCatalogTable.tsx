@@ -1,26 +1,26 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Button, Paper, Stack, Text } from "@mantine/core";
-import { IconPlus } from "@tabler/icons-react";
-import { useLocalStorage } from "@mantine/hooks";
+import { Button, Paper, Select, Stack, Text, TextInput } from "@mantine/core";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { DataTable, useDataTableColumns } from "mantine-datatable";
 import type { CatalogCar } from "@/entities/car";
 import { PhotoLightbox } from "@/shared/ui/PhotoLightbox";
 import { AdminPageHeader } from "@/shared/ui/AdminPageHeader";
 import { GridTableToolbar } from "@/shared/ui/GridTableToolbar";
 import { GridErrorState } from "@/shared/ui/GridErrorState";
-import {
-  GRID_PAGE_SIZE_OPTIONS,
-  type GridDensity,
-} from "@/shared/lib/grid-options";
+import { GridFiltersBar } from "@/shared/ui/GridFiltersBar";
+import { GRID_PAGE_SIZE_OPTIONS } from "@/shared/lib/grid-options";
 import { createCarColumns } from "../../lib/create-car-columns";
 import { useCarCatalogTable } from "../../lib/use-car-catalog-table";
-import { CATALOG_COLUMNS_STORAGE_KEY } from "../../model/filter-options";
 import {
-  CATALOG_COLUMN_LABELS,
-  CATALOG_DENSITY_STORAGE_KEY,
-} from "../../model/view-options";
+  CATALOG_COLUMNS_STORAGE_KEY,
+  COUNTRY_FILTER_OPTIONS,
+  PHOTO_FILTER_OPTIONS,
+  PRICE_FILTER_OPTIONS,
+  PUBLICATION_FILTER_OPTIONS,
+} from "../../model/filter-options";
+import { CATALOG_COLUMN_LABELS } from "../../model/view-options";
 import classes from "./CarCatalogTable.module.css";
 
 type CarCatalogTableProps = {
@@ -44,29 +44,14 @@ export function CarCatalogTable({
 }: CarCatalogTableProps) {
   const [previewCar, setPreviewCar] = useState<CatalogCar | null>(null);
   const catalog = useCarCatalogTable(cars);
-  const [density, setDensity] = useLocalStorage<GridDensity>({
-    key: CATALOG_DENSITY_STORAGE_KEY,
-    defaultValue: "normal",
-  });
   const columns = useMemo(
     () =>
       createCarColumns({
-        filters: catalog.filters,
-        yearOptions: catalog.yearOptions,
-        managerOptions: catalog.managerOptions,
-        updateFilter: catalog.updateFilter,
         onEdit,
         onDuplicate,
         onPreviewPhoto: setPreviewCar,
       }),
-    [
-      catalog.filters,
-      catalog.yearOptions,
-      catalog.managerOptions,
-      catalog.updateFilter,
-      onEdit,
-      onDuplicate,
-    ],
+    [onEdit, onDuplicate],
   );
   const {
     effectiveColumns,
@@ -83,7 +68,6 @@ export function CarCatalogTable({
     resetColumnsOrder();
     resetColumnsWidth();
     resetColumnsPinning();
-    setDensity("normal");
   }
 
   return (
@@ -104,25 +88,97 @@ export function CarCatalogTable({
         <Paper
           withBorder
           radius="lg"
-          data-grid-density={density}
-          className={`${classes.paper} ${density === "compact" ? classes.compact : ""}`}
+          data-grid-density="compact"
+          className={classes.paper}
         >
           {!error && (
-            <div className={classes.toolbar}>
-              <GridTableToolbar
-                count={catalog.count}
-                loading={loading}
-                loadingLabel="Загружаем автомобили…"
-                hasFilters={catalog.hasFilters}
-                onResetFilters={catalog.resetFilters}
-                density={density}
-                onDensityChange={setDensity}
-                columnsToggle={columnsToggle}
-                onColumnsToggleChange={setColumnsToggle}
-                onResetView={resetColumns}
-                columnLabels={CATALOG_COLUMN_LABELS}
-              />
-            </div>
+            <>
+              <GridFiltersBar>
+                <TextInput
+                  aria-label="Марка"
+                  placeholder="Марка"
+                  leftSection={<IconSearch size={16} />}
+                  value={catalog.filters.brand}
+                  onChange={(event) =>
+                    catalog.updateFilter("brand", event.currentTarget.value)
+                  }
+                />
+                <TextInput
+                  aria-label="Модель или номер"
+                  placeholder="Модель или номер"
+                  value={catalog.filters.model}
+                  onChange={(event) =>
+                    catalog.updateFilter("model", event.currentTarget.value)
+                  }
+                />
+                <Select
+                  aria-label="Страна"
+                  data={COUNTRY_FILTER_OPTIONS}
+                  value={catalog.filters.country}
+                  allowDeselect={false}
+                  onChange={(value) =>
+                    catalog.updateFilter("country", value ?? "all")
+                  }
+                />
+                <Select
+                  aria-label="Публикация"
+                  data={PUBLICATION_FILTER_OPTIONS}
+                  value={catalog.filters.publication}
+                  allowDeselect={false}
+                  onChange={(value) =>
+                    catalog.updateFilter("publication", value ?? "all")
+                  }
+                />
+                <Select
+                  aria-label="Ответственный"
+                  data={catalog.managerOptions}
+                  value={catalog.filters.manager}
+                  allowDeselect={false}
+                  onChange={(value) =>
+                    catalog.updateFilter("manager", value ?? "all")
+                  }
+                />
+                <Select
+                  aria-label="Год"
+                  data={catalog.yearOptions}
+                  value={catalog.filters.year}
+                  allowDeselect={false}
+                  onChange={(value) =>
+                    catalog.updateFilter("year", value ?? "all")
+                  }
+                />
+                <Select
+                  aria-label="Цена"
+                  data={PRICE_FILTER_OPTIONS}
+                  value={catalog.filters.price}
+                  allowDeselect={false}
+                  onChange={(value) =>
+                    catalog.updateFilter("price", value ?? "all")
+                  }
+                />
+                <Select
+                  aria-label="Фото"
+                  data={PHOTO_FILTER_OPTIONS}
+                  value={catalog.filters.photo}
+                  allowDeselect={false}
+                  onChange={(value) =>
+                    catalog.updateFilter("photo", value ?? "all")
+                  }
+                />
+              </GridFiltersBar>
+              <div className={classes.toolbar}>
+                <GridTableToolbar
+                  loading={loading}
+                  loadingLabel="Загружаем автомобили…"
+                  hasFilters={catalog.hasFilters}
+                  onResetFilters={catalog.resetFilters}
+                  columnsToggle={columnsToggle}
+                  onColumnsToggleChange={setColumnsToggle}
+                  onResetView={resetColumns}
+                  columnLabels={CATALOG_COLUMN_LABELS}
+                />
+              </div>
+            </>
           )}
 
           {error ? (
@@ -142,8 +198,8 @@ export function CarCatalogTable({
               fetching={loading}
               minHeight={loading || catalog.count === 0 ? 280 : undefined}
               highlightOnHover
-              verticalSpacing={density === "compact" ? "xs" : "sm"}
-              horizontalSpacing={density === "compact" ? "sm" : "md"}
+              verticalSpacing="xs"
+              horizontalSpacing="sm"
               page={catalog.page}
               onPageChange={catalog.setPage}
               totalRecords={catalog.count}

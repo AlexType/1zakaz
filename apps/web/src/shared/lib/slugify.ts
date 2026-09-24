@@ -34,10 +34,12 @@ const CYRILLIC: Record<string, string> = {
   я: "ya",
 };
 
-export function slugifyArticleTitle(title: string): string {
-  return [...title.toLocaleLowerCase("ru-RU")]
-    .map((char) => CYRILLIC[char] ?? char)
+export function slugify(value: string): string {
+  return [...value.toLocaleLowerCase("ru-RU")]
+    .map((character) => CYRILLIC[character] ?? character)
     .join("")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+    .replace(/^-+|-+$/g, "");
 }

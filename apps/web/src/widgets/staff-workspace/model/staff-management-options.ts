@@ -12,7 +12,6 @@ export const STAFF_STATUS_OPTIONS: { value: StaffStatus; label: string }[] = [
 ];
 
 export const STAFF_COLUMNS_STORAGE_KEY = "staff-columns-v1";
-export const STAFF_DENSITY_STORAGE_KEY = "staff-density";
 export const STAFF_ROLE_FILTER_OPTIONS = [
   { value: "all", label: "Все роли" },
   ...STAFF_ROLE_OPTIONS,

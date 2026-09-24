@@ -10,5 +10,5 @@ it("показывает число записей каталога", () => {
       <CarCatalogTable cars={catalogCars} />
     </MantineProvider>,
   );
-  expect(screen.getByText("Найдено: 12")).toBeInTheDocument();
+  expect(screen.getByText("1–10 из 12")).toBeInTheDocument();
 });

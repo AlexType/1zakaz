@@ -1,16 +1,12 @@
 import { Button, Group, Text } from "@mantine/core";
 import type { DataTableColumnToggle } from "mantine-datatable";
-import type { GridDensity } from "@/shared/lib/grid-options";
 import { GridViewOptions } from "@/shared/ui/GridViewOptions";
 
 type Props = {
-  count: number;
   loading?: boolean;
   loadingLabel?: string;
   hasFilters: boolean;
   onResetFilters: () => void;
-  density: GridDensity;
-  onDensityChange: (density: GridDensity) => void;
   columnsToggle: DataTableColumnToggle[];
   onColumnsToggleChange: (columns: DataTableColumnToggle[]) => void;
   onResetView: () => void;
@@ -18,13 +14,10 @@ type Props = {
 };
 
 export function GridTableToolbar({
-  count,
   loading,
   loadingLabel,
   hasFilters,
   onResetFilters,
-  density,
-  onDensityChange,
   columnsToggle,
   onColumnsToggleChange,
   onResetView,
@@ -33,9 +26,11 @@ export function GridTableToolbar({
   return (
     <Group justify="space-between" align="center" gap="sm">
       <Group gap="sm">
-        <Text size="sm" c="dimmed" aria-live="polite">
-          {loading ? (loadingLabel ?? "Загружаем…") : `Найдено: ${count}`}
-        </Text>
+        {loading && (
+          <Text size="sm" c="dimmed" aria-live="polite">
+            {loadingLabel ?? "Загружаем…"}
+          </Text>
+        )}
         {hasFilters && (
           <Button variant="subtle" size="compact-sm" onClick={onResetFilters}>
             Сбросить фильтры
@@ -43,8 +38,6 @@ export function GridTableToolbar({
         )}
       </Group>
       <GridViewOptions
-        density={density}
-        onDensityChange={onDensityChange}
         columnsToggle={columnsToggle}
         onColumnsToggleChange={onColumnsToggleChange}
         onReset={onResetView}

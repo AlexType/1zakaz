@@ -7,10 +7,12 @@ import Placeholder from "@tiptap/extension-placeholder";
 import classes from "./RichTextContentEditor.module.css";
 
 type RichTextContentEditorProps = {
-  initialValue: JSONContent;
+  initialValue: JSONContent | string;
   label: string;
   placeholder: string;
   onChange?: (value: JSONContent, hasText: boolean) => void;
+  onHtmlChange?: (value: string, hasText: boolean) => void;
+  compact?: boolean;
   readOnly?: boolean;
 };
 
@@ -19,6 +21,8 @@ export function RichTextContentEditor({
   label,
   placeholder,
   onChange,
+  onHtmlChange,
+  compact = false,
   readOnly = false,
 }: RichTextContentEditorProps) {
   const editor = useEditor({
@@ -31,8 +35,10 @@ export function RichTextContentEditor({
     editable: !readOnly,
     immediatelyRender: false,
     shouldRerenderOnTransaction: true,
-    onUpdate: ({ editor: current }) =>
-      onChange?.(current.getJSON(), !current.isEmpty),
+    onUpdate: ({ editor: current }) => {
+      onChange?.(current.getJSON(), !current.isEmpty);
+      onHtmlChange?.(current.getHTML(), !current.isEmpty);
+    },
   });
 
   return (
@@ -41,6 +47,7 @@ export function RichTextContentEditor({
       <RichTextEditor
         editor={editor}
         className={classes.editor}
+        data-compact={compact || undefined}
         labels={{
           linkEditorInputLabel: "Адрес ссылки",
           linkEditorInputPlaceholder: "https://",

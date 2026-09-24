@@ -7,7 +7,6 @@ export const ARTICLE_CATEGORIES: ArticleCategory[] = [
 ];
 
 export const ARTICLE_COLUMNS_STORAGE_KEY = "article-columns-v1";
-export const ARTICLE_DENSITY_STORAGE_KEY = "article-density";
 export const ARTICLE_STATUS_FILTER_OPTIONS = [
   { value: "all", label: "Все статусы" },
   { value: "draft", label: "Черновики" },

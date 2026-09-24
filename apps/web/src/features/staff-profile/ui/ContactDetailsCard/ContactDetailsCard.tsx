@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type SubmitEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import {
   Alert,
   Badge,
   Button,
   Divider,
   Group,
-  MaskInput,
   Paper,
   Stack,
   Text,
@@ -18,6 +17,7 @@ import type { StaffAccount } from "@/entities/employee";
 import { formatRussianPhone } from "@/shared/lib/format-russian-phone";
 import { normalizeRussianPhone } from "@/shared/lib/normalize-russian-phone";
 import { showActionError } from "@/shared/lib/show-action-notification";
+import { PhoneInput } from "@/shared/ui/PhoneInput";
 import classes from "./ContactDetailsCard.module.css";
 
 type ContactDetailsCardProps = {
@@ -34,18 +34,6 @@ export function ContactDetailsCard({
   const [editingPhone, setEditingPhone] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [pastedPhone, setPastedPhone] = useState<string | null>(null);
-  const [pasteVersion, setPasteVersion] = useState(0);
-  const phoneInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (pasteVersion === 0) return;
-    phoneInputRef.current?.focus();
-    phoneInputRef.current?.setSelectionRange(
-      phoneInputRef.current.value.length,
-      phoneInputRef.current.value.length,
-    );
-  }, [pasteVersion]);
 
   async function savePhone(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,7 +47,6 @@ export function ContactDetailsCard({
     setError(null);
     try {
       await onPhoneSave(normalized);
-      setPastedPhone(null);
       setEditingPhone(false);
     } catch {
       showActionError("Не удалось изменить номер. Попробуйте ещё раз.");
@@ -70,7 +57,6 @@ export function ContactDetailsCard({
 
   function cancel() {
     setError(null);
-    setPastedPhone(null);
     setEditingPhone(false);
   }
 
@@ -105,26 +91,10 @@ export function ContactDetailsCard({
                   {error}
                 </Alert>
               )}
-              <MaskInput
-                key={pasteVersion}
-                ref={phoneInputRef}
+              <PhoneInput
                 name="phone"
                 label="Номер телефона"
-                mask="+7 (999) 999-99-99"
-                placeholder="+7 (___) ___-__-__"
-                type="tel"
-                autoComplete="tel"
-                inputMode="numeric"
-                defaultValue={formatRussianPhone(pastedPhone ?? profile.phone)}
-                onPaste={(event) => {
-                  const normalized = normalizeRussianPhone(
-                    event.clipboardData.getData("text"),
-                  );
-                  if (!normalized) return;
-                  event.preventDefault();
-                  setPastedPhone(normalized);
-                  setPasteVersion((version) => version + 1);
-                }}
+                defaultValue={formatRussianPhone(profile.phone)}
                 disabled={busy}
                 required
               />

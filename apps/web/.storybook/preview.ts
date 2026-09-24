@@ -4,6 +4,8 @@ import { AdminProviders } from "../src/_app/admin";
 import { MantineAppProvider } from "../src/_app/mantine";
 import "@fontsource-variable/inter/wght.css";
 import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
+import "@blocknote/mantine/blocknoteStyles.css";
 import "mantine-datatable/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@mantine/lightbox/styles.css";

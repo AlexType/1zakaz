@@ -15,7 +15,7 @@ import { IconCheck, IconCopy } from "@tabler/icons-react";
 import { useCreateInvitation } from "../../lib/use-create-invitation";
 import type { CreateInvitation, InviteRole } from "../../model/contracts";
 import { INVITATION_LIFETIME_OPTIONS } from "../../model/invitation-lifetime-options";
-import { formatDateTime } from "@/shared/lib/format-date-time";
+import { formatCompactDateTime } from "@/shared/lib/format-compact-date";
 import { FormError } from "@/shared/ui/FormError";
 
 type CreateInvitationFormProps = {
@@ -45,16 +45,12 @@ export function CreateInvitationForm({
           <Title order={2} size="h3">
             Пригласить сотрудника
           </Title>
-          <Text c="dimmed" size="sm" mt="xs">
-            Выберите роль и срок действия. Ссылка сработает только один раз.
-          </Text>
         </div>
         <FormError message={error} />
         <form onSubmit={(event) => void submit(event)}>
           <Stack gap="md">
             <Select
               label="Роль нового сотрудника"
-              description="Доступные роли определяет система по вашим правам."
               placeholder="Выберите роль"
               data={availableRoles}
               value={roleId}
@@ -85,7 +81,8 @@ export function CreateInvitationForm({
           >
             <Stack gap="sm" mt="xs">
               <Text size="sm">
-                Ссылка действует до {formatDateTime(invitation.expiresAt)}.
+                Ссылка действует до{" "}
+                {formatCompactDateTime(invitation.expiresAt)}.
               </Text>
               <TextInput
                 label="Ссылка для сотрудника"

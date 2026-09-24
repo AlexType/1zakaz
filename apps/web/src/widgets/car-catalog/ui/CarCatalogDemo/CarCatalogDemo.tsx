@@ -13,7 +13,13 @@ import { CarCatalogTable } from "../CarCatalogTable";
 type ActiveEditor =
   { mode: "create" } | { mode: "edit" | "duplicate"; id: string };
 
-export function CarCatalogDemo() {
+type Props = {
+  brands?: string[];
+  models?: string[];
+  managers?: string[];
+};
+
+export function CarCatalogDemo({ brands, models, managers }: Props = {}) {
   const [records, setRecords] = useState(createDemoRecords);
   const [active, setActive] = useState<ActiveEditor | null>(null);
   function open(mode: "edit" | "duplicate", car: CatalogCar) {
@@ -73,13 +79,19 @@ export function CarCatalogDemo() {
             : undefined
         }
         initialPhotos={record?.photos}
-        brands={[...new Set(records.map((item) => item.values.brand))]}
-        models={[...new Set(records.map((item) => item.values.model))]}
-        managers={[
-          ...new Set(
-            records.map((item) => item.values.manager).filter(Boolean),
-          ),
-        ]}
+        brands={
+          brands ?? [...new Set(records.map((item) => item.values.brand))]
+        }
+        models={
+          models ?? [...new Set(records.map((item) => item.values.model))]
+        }
+        managers={
+          managers ?? [
+            ...new Set(
+              records.map((item) => item.values.manager).filter(Boolean),
+            ),
+          ]
+        }
         onSave={save}
         onCancel={() => setActive(null)}
         onDelete={

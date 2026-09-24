@@ -11,6 +11,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconDeviceFloppy } from "@tabler/icons-react";
+import { PhoneInput } from "@/shared/ui/PhoneInput";
 import type { CompanyDetails } from "../../model/site-management";
 
 type Props = {
@@ -60,11 +61,7 @@ export function CompanyDetailsCard({ value, onChange, onSave }: Props) {
             inputMode="numeric"
             {...field("ogrn")}
           />
-          <TextInput
-            label="Телефон"
-            placeholder="+7 999 000-00-00"
-            {...field("phone")}
-          />
+          <PhoneInput label="Телефон" {...field("phone")} />
           <TextInput
             label="Почта"
             placeholder="mail@example.ru"

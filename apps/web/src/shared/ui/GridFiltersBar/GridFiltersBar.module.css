@@ -1,0 +1,32 @@
+.root {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+  gap: var(--mantine-spacing-xs);
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.root > :first-child {
+  grid-column: span 2;
+}
+
+@media (max-width: 40em) {
+  .root {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-inline: var(--mantine-spacing-md);
+  }
+
+  .root > :first-child {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 23em) {
+  .root {
+    grid-template-columns: 1fr;
+  }
+
+  .root > :first-child {
+    grid-column: auto;
+  }
+}

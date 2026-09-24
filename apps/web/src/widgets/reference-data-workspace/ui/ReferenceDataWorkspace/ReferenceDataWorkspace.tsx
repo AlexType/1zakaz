@@ -3,15 +3,15 @@
 import { useMemo, useState } from "react";
 import {
   Button,
-  Group,
   Paper,
+  Select,
   Stack,
   Text,
+  TextInput,
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import { useLocalStorage } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
 import {
   DataTable,
   useDataTableColumns,
@@ -21,12 +21,12 @@ import type {
   ReferenceCategoryId,
   ReferenceEntry,
 } from "@/entities/reference-entry";
-import {
-  GRID_PAGE_SIZE_OPTIONS,
-  type GridDensity,
-} from "@/shared/lib/grid-options";
+import { GRID_PAGE_SIZE_OPTIONS } from "@/shared/lib/grid-options";
 import { showActionSuccess } from "@/shared/lib/show-action-notification";
 import { GridTableToolbar } from "@/shared/ui/GridTableToolbar";
+import { AdminPageHeader } from "@/shared/ui/AdminPageHeader";
+import { GridErrorState } from "@/shared/ui/GridErrorState";
+import { GridFiltersBar } from "@/shared/ui/GridFiltersBar";
 import {
   createReferenceColumns,
   type ReferenceFilters,
@@ -36,15 +36,26 @@ import {
   REFERENCE_CATEGORIES,
   REFERENCE_COLUMN_LABELS,
   REFERENCE_COLUMNS_STORAGE_KEY,
-  REFERENCE_DENSITY_STORAGE_KEY,
 } from "../../model/reference-data-options";
 import { ReferenceEntryEditor } from "../ReferenceEntryEditor";
 import classes from "./ReferenceDataWorkspace.module.css";
 
 const INITIAL_FILTERS: ReferenceFilters = { name: "", code: "", active: "all" };
 
-export function ReferenceDataWorkspace() {
-  const [entries, setEntries] = useState(DEMO_REFERENCE_ENTRIES);
+type Props = {
+  initialEntries?: ReferenceEntry[];
+  loading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
+};
+
+export function ReferenceDataWorkspace({
+  initialEntries = DEMO_REFERENCE_ENTRIES,
+  loading = false,
+  error = null,
+  onRetry,
+}: Props = {}) {
+  const [entries, setEntries] = useState(initialEntries);
   const [categoryId, setCategoryId] = useState<ReferenceCategoryId>("brands");
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [editing, setEditing] = useState<ReferenceEntry | null>(null);
@@ -54,10 +65,6 @@ export function ReferenceDataWorkspace() {
   const [sortStatus, setSortStatus] = useState<
     DataTableSortStatus<ReferenceEntry>
   >({ columnAccessor: "name", direction: "asc" });
-  const [density, setDensity] = useLocalStorage<GridDensity>({
-    key: REFERENCE_DENSITY_STORAGE_KEY,
-    defaultValue: "normal",
-  });
   const category =
     REFERENCE_CATEGORIES.find((item) => item.id === categoryId) ??
     REFERENCE_CATEGORIES[0];
@@ -89,17 +96,12 @@ export function ReferenceDataWorkspace() {
   const columns = useMemo(
     () =>
       createReferenceColumns({
-        filters,
-        updateFilter: (key, value) => {
-          setFilters((current) => ({ ...current, [key]: value }));
-          setPage(1);
-        },
         onEdit: (entry) => {
           setEditing(structuredClone(entry));
           setEditorOpen(true);
         },
       }),
-    [filters],
+    [],
   );
   const tableColumns = useDataTableColumns({
     key: REFERENCE_COLUMNS_STORAGE_KEY,
@@ -137,25 +139,20 @@ export function ReferenceDataWorkspace() {
     tableColumns.resetColumnsOrder();
     tableColumns.resetColumnsWidth();
     tableColumns.resetColumnsPinning();
-    setDensity("normal");
   }
 
   return (
     <section className={classes.section} aria-label="Справочники">
       <Stack gap="lg">
-        <Group justify="space-between" align="center">
-          <div>
-            <Title order={1} size="h2">
-              Справочники
-            </Title>
-            <Text size="sm" c="dimmed" mt={4}>
-              Значения для автомобилей, статей и заявок
-            </Text>
-          </div>
-          <Button leftSection={<IconPlus size={18} />} onClick={openCreate}>
-            Добавить значение
-          </Button>
-        </Group>
+        <AdminPageHeader
+          title="Справочники"
+          description="Значения для автомобилей, статей и заявок"
+          actions={
+            <Button leftSection={<IconPlus size={18} />} onClick={openCreate}>
+              Добавить значение
+            </Button>
+          }
+        />
         <div className={classes.layout}>
           <Paper withBorder radius="lg" className={classes.categories}>
             {REFERENCE_CATEGORIES.map((item) => (
@@ -192,52 +189,112 @@ export function ReferenceDataWorkspace() {
               </Text>
             </div>
             <Paper withBorder radius="lg" className={classes.table}>
-              <div className={classes.toolbar}>
-                <GridTableToolbar
-                  count={filtered.length}
-                  hasFilters={hasFilters}
-                  onResetFilters={() => setFilters(INITIAL_FILTERS)}
-                  density={density}
-                  onDensityChange={setDensity}
-                  columnsToggle={tableColumns.columnsToggle}
-                  onColumnsToggleChange={tableColumns.setColumnsToggle}
-                  onResetView={resetView}
-                  columnLabels={REFERENCE_COLUMN_LABELS}
+              {!error && (
+                <>
+                  <GridFiltersBar>
+                    <TextInput
+                      aria-label="Поиск по справочнику"
+                      placeholder="Название"
+                      leftSection={<IconSearch size={16} />}
+                      value={filters.name}
+                      onChange={(event) => {
+                        setFilters((current) => ({
+                          ...current,
+                          name: event.currentTarget.value,
+                        }));
+                        setPage(1);
+                      }}
+                    />
+                    <TextInput
+                      aria-label="Код значения"
+                      placeholder="Код"
+                      value={filters.code}
+                      onChange={(event) => {
+                        setFilters((current) => ({
+                          ...current,
+                          code: event.currentTarget.value,
+                        }));
+                        setPage(1);
+                      }}
+                    />
+                    <Select
+                      aria-label="Состояние"
+                      data={[
+                        { value: "all", label: "Все состояния" },
+                        { value: "active", label: "Активные" },
+                        { value: "inactive", label: "Отключённые" },
+                      ]}
+                      value={filters.active}
+                      allowDeselect={false}
+                      onChange={(value) => {
+                        setFilters((current) => ({
+                          ...current,
+                          active: value ?? "all",
+                        }));
+                        setPage(1);
+                      }}
+                    />
+                  </GridFiltersBar>
+                  <div className={classes.toolbar}>
+                    <GridTableToolbar
+                      loading={loading}
+                      loadingLabel="Загружаем значения…"
+                      hasFilters={hasFilters}
+                      onResetFilters={() => setFilters(INITIAL_FILTERS)}
+                      columnsToggle={tableColumns.columnsToggle}
+                      onColumnsToggleChange={tableColumns.setColumnsToggle}
+                      onResetView={resetView}
+                      columnLabels={REFERENCE_COLUMN_LABELS}
+                    />
+                  </div>
+                </>
+              )}
+              {error ? (
+                <GridErrorState
+                  title="Не удалось загрузить справочники"
+                  message={error}
+                  onRetry={onRetry}
                 />
-              </div>
-              <DataTable
-                records={filtered.slice((page - 1) * pageSize, page * pageSize)}
-                columns={tableColumns.effectiveColumns}
-                idAccessor="id"
-                storeColumnsKey={REFERENCE_COLUMNS_STORAGE_KEY}
-                sortStatus={sortStatus}
-                onSortStatusChange={setSortStatus}
-                highlightOnHover
-                verticalSpacing={density === "compact" ? "xs" : "sm"}
-                horizontalSpacing={density === "compact" ? "sm" : "md"}
-                minHeight={filtered.length === 0 ? 280 : undefined}
-                page={page}
-                onPageChange={setPage}
-                totalRecords={filtered.length}
-                recordsPerPage={pageSize}
-                recordsPerPageOptions={GRID_PAGE_SIZE_OPTIONS}
-                onRecordsPerPageChange={(size) => {
-                  setPageSize(size);
-                  setPage(1);
-                }}
-                recordsPerPageLabel="На странице"
-                paginationText={({ from, to, totalRecords }) =>
-                  `${from}–${to} из ${totalRecords}`
-                }
-                emptyState={
-                  <Stack align="center" gap="xs" py="xl">
-                    <Text fw={600}>Значений пока нет</Text>
-                    <Button variant="light" size="sm" onClick={openCreate}>
-                      Добавить значение
-                    </Button>
-                  </Stack>
-                }
-              />
+              ) : (
+                <DataTable
+                  records={filtered.slice(
+                    (page - 1) * pageSize,
+                    page * pageSize,
+                  )}
+                  columns={tableColumns.effectiveColumns}
+                  idAccessor="id"
+                  storeColumnsKey={REFERENCE_COLUMNS_STORAGE_KEY}
+                  sortStatus={sortStatus}
+                  onSortStatusChange={setSortStatus}
+                  highlightOnHover
+                  fetching={loading}
+                  loadingText="Загружаем значения…"
+                  verticalSpacing="xs"
+                  horizontalSpacing="sm"
+                  minHeight={filtered.length === 0 ? 280 : undefined}
+                  page={page}
+                  onPageChange={setPage}
+                  totalRecords={filtered.length}
+                  recordsPerPage={pageSize}
+                  recordsPerPageOptions={GRID_PAGE_SIZE_OPTIONS}
+                  onRecordsPerPageChange={(size) => {
+                    setPageSize(size);
+                    setPage(1);
+                  }}
+                  recordsPerPageLabel="На странице"
+                  paginationText={({ from, to, totalRecords }) =>
+                    `${from}–${to} из ${totalRecords}`
+                  }
+                  emptyState={
+                    <Stack align="center" gap="xs" py="xl">
+                      <Text fw={600}>Значений пока нет</Text>
+                      <Button variant="light" size="sm" onClick={openCreate}>
+                        Добавить значение
+                      </Button>
+                    </Stack>
+                  }
+                />
+              )}
             </Paper>
           </Stack>
         </div>

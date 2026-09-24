@@ -1,4 +1,13 @@
-export type { Lead, LeadCountry, LeadNote, LeadStatus } from "./model/lead";
+export type {
+  Lead,
+  LeadContactMethod,
+  LeadCountry,
+  LeadNote,
+  LeadPurchaseTiming,
+  LeadStatus,
+  LeadVehicleCondition,
+  LeadVehicleType,
+} from "./model/lead";
 export {
   LEAD_STATUS_COLORS,
   LEAD_STATUS_LABELS,

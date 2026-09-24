@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { expect, userEvent, within } from "storybook/test";
 import { CreateInvitationForm } from "./CreateInvitationForm";
 
 const meta = {
@@ -32,4 +33,35 @@ export const Default: Story = { name: "Создание" };
 export const RestrictedRoles: Story = {
   name: "Ограниченный выбор ролей",
   args: { availableRoles: [{ value: "manager", label: "Менеджер" }] },
+};
+export const ValidationError: Story = {
+  name: "Ошибка валидации",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Создать ссылку" }),
+    );
+    await expect(
+      canvas.getByText("Выберите роль из доступного списка."),
+    ).toBeVisible();
+  },
+};
+export const Success: Story = {
+  name: "Приглашение создано",
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole("textbox", { name: "Роль нового сотрудника" }),
+    );
+    await userEvent.click(page.getByRole("option", { name: "Менеджер" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Создать ссылку" }),
+    );
+    await expect(await canvas.findByText("Приглашение создано")).toBeVisible();
+  },
+};
+export const Mobile: Story = {
+  name: "Телефон",
+  parameters: { viewport: { defaultViewport: "mobile1" } },
 };

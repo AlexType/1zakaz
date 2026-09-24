@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Stack, Title } from "@mantine/core";
 import type { StaffAccount } from "@/entities/employee";
 import { showActionSuccess } from "@/shared/lib/show-action-notification";
+import { GridErrorState } from "@/shared/ui/GridErrorState";
+import { PageLoadingState } from "@/shared/ui/PageLoadingState";
 import type { StaffProfileActions } from "../../model/contracts";
 import { ChangeEmailDialog } from "../ChangeEmailDialog";
 import { ContactDetailsCard } from "../ContactDetailsCard";
@@ -15,11 +17,17 @@ import classes from "./StaffProfileSettings.module.css";
 type StaffProfileSettingsProps = {
   initialProfile: StaffAccount;
   actions: StaffProfileActions;
+  loading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
 };
 
 export function StaffProfileSettings({
   initialProfile,
   actions,
+  loading = false,
+  error = null,
+  onRetry,
 }: StaffProfileSettingsProps) {
   const [profile, setProfile] = useState(initialProfile);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
@@ -27,46 +35,56 @@ export function StaffProfileSettings({
 
   return (
     <section className={classes.page} aria-label="Профиль сотрудника">
-      <Stack gap="lg">
-        <Title order={1} size="h2">
-          Профиль
-        </Title>
-        <PersonalDetailsCard
-          profile={profile}
-          onSave={async (values) => {
-            await actions.savePersonalDetails(values);
-            setProfile((current) => ({
-              ...current,
-              ...values,
-            }));
-            showActionSuccess("Личные данные сохранены.");
-          }}
-          onAvatarChange={async (change) => {
-            await actions.updateAvatar(change.file, change.originalFile);
-            setProfile((current) => ({
-              ...current,
-              avatarUrl: change.previewUrl,
-              avatarSourceUrl: change.sourceUrl,
-            }));
-            showActionSuccess(
-              change.file ? "Фото обновлено." : "Фото удалено.",
-            );
-          }}
+      {loading ? (
+        <PageLoadingState label="Загружаем профиль…" />
+      ) : error ? (
+        <GridErrorState
+          title="Не удалось загрузить профиль"
+          message={error}
+          onRetry={onRetry}
         />
-        <ContactDetailsCard
-          profile={profile}
-          onPhoneSave={async (phone) => {
-            await actions.updatePhone(phone);
-            setProfile((current) => ({ ...current, phone }));
-            showActionSuccess("Номер изменён.");
-          }}
-          onEmailEdit={() => setEmailDialogOpen(true)}
-        />
-        <SecuritySettingsCard
-          profile={profile}
-          onSetPassword={() => setPasswordDialogOpen(true)}
-        />
-      </Stack>
+      ) : (
+        <Stack gap="lg">
+          <Title order={1} size="h2">
+            Профиль
+          </Title>
+          <PersonalDetailsCard
+            profile={profile}
+            onSave={async (values) => {
+              await actions.savePersonalDetails(values);
+              setProfile((current) => ({
+                ...current,
+                ...values,
+              }));
+              showActionSuccess("Личные данные сохранены.");
+            }}
+            onAvatarChange={async (change) => {
+              await actions.updateAvatar(change.file, change.originalFile);
+              setProfile((current) => ({
+                ...current,
+                avatarUrl: change.previewUrl,
+                avatarSourceUrl: change.sourceUrl,
+              }));
+              showActionSuccess(
+                change.file ? "Фото обновлено." : "Фото удалено.",
+              );
+            }}
+          />
+          <ContactDetailsCard
+            profile={profile}
+            onPhoneSave={async (phone) => {
+              await actions.updatePhone(phone);
+              setProfile((current) => ({ ...current, phone }));
+              showActionSuccess("Номер изменён.");
+            }}
+            onEmailEdit={() => setEmailDialogOpen(true)}
+          />
+          <SecuritySettingsCard
+            profile={profile}
+            onSetPassword={() => setPasswordDialogOpen(true)}
+          />
+        </Stack>
+      )}
       <ChangeEmailDialog
         opened={emailDialogOpen}
         currentEmail={profile.email}

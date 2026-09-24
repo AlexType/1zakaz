@@ -8,28 +8,28 @@ export const DEMO_ARTICLES: Article[] = [
     excerpt:
       "На что смотреть при выборе автомобиля и как оценить состояние до покупки.",
     categoryId: "guides",
+    tags: ["Япония", "подбор", "аукцион"],
     coverUrl: "https://placecats.com/neo/300/200",
-    body: {
-      type: "doc",
-      content: [
-        {
-          type: "heading",
-          attrs: { level: 2 },
-          content: [{ type: "text", text: "С чего начать" }],
-        },
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Определите бюджет и требования к автомобилю.",
-            },
-          ],
-        },
-      ],
-    },
+    coverAlt: "Автомобиль на японском аукционе",
+    content: [
+      { type: "heading", props: { level: 2 }, content: "С чего начать" },
+      {
+        type: "paragraph",
+        content: "Определите бюджет и требования к автомобилю.",
+      },
+      {
+        type: "callout",
+        props: { tone: "info" },
+        content:
+          "Не ориентируйтесь только на аукционную оценку — изучайте замечания инспектора.",
+      },
+    ],
     status: "published",
     authorName: "Петрова Анна Сергеевна",
+    seoTitle: "Как выбрать автомобиль из Японии",
+    seoDescription:
+      "На что смотреть при выборе автомобиля и как оценить состояние до покупки.",
+    ogImageUrl: "https://placecats.com/neo/300/200",
     updatedAt: "2026-09-22T07:25:00Z",
     publishedAt: "2026-09-20T05:00:00Z",
   },
@@ -39,23 +39,20 @@ export const DEMO_ARTICLES: Article[] = [
     slug: "dostavka-avtomobilya-iz-kitaya",
     excerpt: "Этапы доставки и документы, которые понадобятся при оформлении.",
     categoryId: "delivery",
+    tags: ["Китай", "доставка"],
     coverUrl: "https://placecats.com/millie/300/200",
-    body: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Здесь будет проверенная инструкция по доставке.",
-            },
-          ],
-        },
-      ],
-    },
+    coverAlt: "Доставка автомобиля из Китая",
+    content: [
+      {
+        type: "paragraph",
+        content: "Здесь будет проверенная инструкция по доставке.",
+      },
+    ],
     status: "draft",
     authorName: "Орлов Михаил Петрович",
+    seoTitle: "Доставка автомобиля из Китая",
+    seoDescription: "Этапы доставки и документы для оформления автомобиля.",
+    ogImageUrl: "https://placecats.com/millie/300/200",
     updatedAt: "2026-09-21T08:40:00Z",
     publishedAt: null,
   },
@@ -65,23 +62,20 @@ export const DEMO_ARTICLES: Article[] = [
     slug: "dokumenty-dlya-pokupki",
     excerpt: "Собрали список документов для покупки и оформления автомобиля.",
     categoryId: "guides",
+    tags: ["документы"],
     coverUrl: null,
-    body: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Проверьте актуальный список документов с менеджером.",
-            },
-          ],
-        },
-      ],
-    },
+    coverAlt: "",
+    content: [
+      {
+        type: "paragraph",
+        content: "Проверьте актуальный список документов с менеджером.",
+      },
+    ],
     status: "published",
     authorName: "Петрова Анна Сергеевна",
+    seoTitle: "Какие документы нужны для покупки автомобиля",
+    seoDescription: "Список документов для покупки и оформления автомобиля.",
+    ogImageUrl: null,
     updatedAt: "2026-09-18T11:15:00Z",
     publishedAt: "2026-09-18T11:15:00Z",
   },

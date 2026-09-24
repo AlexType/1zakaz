@@ -1,0 +1,106 @@
+.shell {
+  width: min(100%, 760px);
+  margin-inline: auto;
+}
+
+.title {
+  line-height: 1.25;
+}
+
+.progress {
+  display: grid;
+  gap: 6px;
+}
+
+.progressLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-sm);
+}
+
+.optionGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.fourColumn,
+.threeColumn {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 7px 9px;
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-md);
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease;
+}
+
+.choice:hover {
+  border-color: var(--mantine-color-gray-5);
+}
+
+.choice:has(input:checked) {
+  border-color: var(--mantine-color-gray-5);
+  background: var(--mantine-color-gray-0);
+}
+
+.choice :global(.mantine-Radio-body) {
+  align-items: center;
+  width: 100%;
+}
+
+.choice :global(.mantine-Radio-inner) {
+  align-self: center;
+}
+
+.choice :global(.mantine-Radio-label) {
+  min-width: 0;
+  padding-inline-start: 7px;
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1.25;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--mantine-spacing-sm);
+  padding-top: 2px;
+}
+
+.actions > * {
+  width: 100%;
+}
+
+@media (min-width: 48em) {
+  .twoColumn {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .threeColumn {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .fourColumn {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .actions > * {
+    width: auto;
+  }
+}

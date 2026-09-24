@@ -3,5 +3,9 @@ export type {
   CarCountry,
   PublicationStatus,
 } from "./model/catalog-car";
-export { COUNTRY_LABELS, PUBLICATION_LABELS } from "./model/catalog-options";
+export {
+  CAR_COUNTRY_OPTIONS,
+  COUNTRY_LABELS,
+  PUBLICATION_LABELS,
+} from "./model/catalog-options";
 export { CountryFlag } from "./ui/CountryFlag";

@@ -1,22 +1,8 @@
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Popover,
-  SegmentedControl,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Button, Checkbox, Divider, Popover, Stack, Text } from "@mantine/core";
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import type { DataTableColumnToggle } from "mantine-datatable";
-import {
-  GRID_DENSITY_OPTIONS,
-  type GridDensity,
-} from "@/shared/lib/grid-options";
 
 type Props = {
-  density: GridDensity;
-  onDensityChange: (density: GridDensity) => void;
   columnsToggle: DataTableColumnToggle[];
   onColumnsToggleChange: (columns: DataTableColumnToggle[]) => void;
   onReset: () => void;
@@ -24,8 +10,6 @@ type Props = {
 };
 
 export function GridViewOptions({
-  density,
-  onDensityChange,
   columnsToggle,
   onColumnsToggleChange,
   onReset,
@@ -44,18 +28,6 @@ export function GridViewOptions({
       </Popover.Target>
       <Popover.Dropdown>
         <Stack gap="sm">
-          <Text size="sm" fw={600}>
-            Плотность строк
-          </Text>
-          <SegmentedControl
-            fullWidth
-            data={GRID_DENSITY_OPTIONS}
-            value={density}
-            onChange={(value) =>
-              onDensityChange(value === "compact" ? "compact" : "normal")
-            }
-          />
-          <Divider />
           <Text size="sm" fw={600}>
             Показывать в таблице
           </Text>

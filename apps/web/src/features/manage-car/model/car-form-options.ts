@@ -1,11 +1,7 @@
-import type { CarCountry } from "@/entities/car";
+import { CAR_COUNTRY_OPTIONS, type CarCountry } from "@/entities/car";
 import type { PriceCurrency } from "./car-form";
 
-export const COUNTRY_OPTIONS = [
-  { value: "japan", label: "Япония" },
-  { value: "china", label: "Китай" },
-  { value: "korea", label: "Корея" },
-] as const;
+export const COUNTRY_OPTIONS = CAR_COUNTRY_OPTIONS;
 
 export const YEAR_OPTIONS = Array.from(
   { length: new Date().getFullYear() + 2 - 1980 },

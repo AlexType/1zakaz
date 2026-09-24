@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Stack, Tabs } from "@mantine/core";
+import { Badge, Paper, Stack, Tabs } from "@mantine/core";
 import {
   IconCalculator,
   IconCurrencyRubel,
@@ -11,6 +11,8 @@ import {
 } from "@tabler/icons-react";
 import { showActionSuccess } from "@/shared/lib/show-action-notification";
 import { AdminPageHeader } from "@/shared/ui/AdminPageHeader";
+import { GridErrorState } from "@/shared/ui/GridErrorState";
+import { PageLoadingState } from "@/shared/ui/PageLoadingState";
 import { createDemoCalculation } from "../../lib/stories/create-demo-calculation";
 import { createDemoPriceImpact } from "../../lib/stories/create-demo-price-impact";
 import { getPricingChanges } from "../../lib/compare-pricing-drafts";
@@ -32,7 +34,19 @@ import { PricingCalculator } from "../PricingCalculator";
 import { PricingPreview } from "../PricingPreview";
 import classes from "./PricingWorkspace.module.css";
 
-export function PricingWorkspace() {
+type Props = {
+  loading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
+  initialTab?: string;
+};
+
+export function PricingWorkspace({
+  loading = false,
+  error = null,
+  onRetry,
+  initialTab = "rates",
+}: Props = {}) {
   const [publishedRates, setPublishedRates] =
     useState<ExchangeRate[]>(DEMO_RATES);
   const [draftRates, setDraftRates] = useState<ExchangeRate[]>(DEMO_RATES);
@@ -43,7 +57,7 @@ export function PricingWorkspace() {
     useState<DemoRuleSet>(DEMO_RULE_SET);
   const [draftRules, setDraftRules] = useState<DemoRuleSet>(DEMO_RULE_SET);
   const [country, setCountry] = useState<Country>("japan");
-  const [tab, setTab] = useState<string | null>("rates");
+  const [tab, setTab] = useState<string | null>(initialTab);
   const [version, setVersion] = useState(1);
   const changes = getPricingChanges(
     publishedRates,
@@ -123,91 +137,114 @@ export function PricingWorkspace() {
             </Badge>
           }
         />
-        <Tabs value={tab} onChange={setTab}>
-          <Tabs.List>
-            <Tabs.Tab
-              value="rates"
-              leftSection={<IconCurrencyRubel size={17} />}
-            >
-              Курсы валют
-            </Tabs.Tab>
-            <Tabs.Tab value="rules" leftSection={<IconScale size={17} />}>
-              Правила расчёта
-            </Tabs.Tab>
-            <Tabs.Tab
-              value="expenses"
-              leftSection={<IconTruckDelivery size={17} />}
-            >
-              Расходы
-            </Tabs.Tab>
-            <Tabs.Tab
-              value="calculator"
-              leftSection={<IconCalculator size={17} />}
-            >
-              Проверить расчёт
-            </Tabs.Tab>
-            <Tabs.Tab value="review" leftSection={<IconListCheck size={17} />}>
-              Проверка{changes.count ? ` (${changes.count})` : ""}
-            </Tabs.Tab>
-          </Tabs.List>
-          <Tabs.Panel value="rates" pt="lg">
-            <ExchangeRatesCard
-              rates={draftRates}
-              onModeChange={changeMode}
-              onManualChange={(currency, value) =>
-                updateRate(currency, (rate) => ({ ...rate, manualRub: value }))
-              }
+        {loading ? (
+          <Paper withBorder radius="lg">
+            <PageLoadingState label="Загружаем расчётные параметры…" />
+          </Paper>
+        ) : error ? (
+          <Paper withBorder radius="lg">
+            <GridErrorState
+              title="Не удалось загрузить расчётные параметры"
+              message={error}
+              onRetry={onRetry}
             />
-          </Tabs.Panel>
-          <Tabs.Panel value="expenses" pt="lg">
-            <ExpensesCard
-              country={country}
-              publishedExpenses={publishedExpenses}
-              expenses={draftExpenses}
-              onCountryChange={setCountry}
-              onAmountChange={(id, amountRub) =>
-                setDraftExpenses((expenses) =>
-                  expenses.map((expense) =>
-                    expense.id === id ? { ...expense, amountRub } : expense,
-                  ),
-                )
-              }
-            />
-          </Tabs.Panel>
-          <Tabs.Panel value="calculator" pt="lg">
-            <PricingCalculator
-              onCalculate={(request) =>
-                createDemoCalculation(
-                  request,
+          </Paper>
+        ) : (
+          <Tabs value={tab} onChange={setTab}>
+            <Tabs.List className={classes.tabsList}>
+              <Tabs.Tab
+                value="rates"
+                leftSection={<IconCurrencyRubel size={17} />}
+              >
+                Курсы валют
+              </Tabs.Tab>
+              <Tabs.Tab value="rules" leftSection={<IconScale size={17} />}>
+                Правила расчёта
+              </Tabs.Tab>
+              <Tabs.Tab
+                value="expenses"
+                leftSection={<IconTruckDelivery size={17} />}
+              >
+                Расходы
+              </Tabs.Tab>
+              <Tabs.Tab
+                value="calculator"
+                leftSection={<IconCalculator size={17} />}
+              >
+                Проверить расчёт
+              </Tabs.Tab>
+              <Tabs.Tab
+                value="review"
+                leftSection={<IconListCheck size={17} />}
+              >
+                Проверка{changes.count ? ` (${changes.count})` : ""}
+              </Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Panel value="rates" pt="lg">
+              <ExchangeRatesCard
+                rates={draftRates}
+                onModeChange={changeMode}
+                onManualChange={(currency, value) =>
+                  updateRate(currency, (rate) => ({
+                    ...rate,
+                    manualRub: value,
+                  }))
+                }
+              />
+            </Tabs.Panel>
+            <Tabs.Panel value="expenses" pt="lg">
+              <ExpensesCard
+                country={country}
+                publishedExpenses={publishedExpenses}
+                expenses={draftExpenses}
+                onCountryChange={setCountry}
+                onAmountChange={(id, amountRub) =>
+                  setDraftExpenses((expenses) =>
+                    expenses.map((expense) =>
+                      expense.id === id ? { ...expense, amountRub } : expense,
+                    ),
+                  )
+                }
+              />
+            </Tabs.Panel>
+            <Tabs.Panel value="calculator" pt="lg">
+              <PricingCalculator
+                onCalculate={(request) =>
+                  createDemoCalculation(
+                    request,
+                    draftRates,
+                    draftExpenses,
+                    draftRules,
+                  )
+                }
+                revisionKey={JSON.stringify([
                   draftRates,
                   draftExpenses,
                   draftRules,
-                )
-              }
-              revisionKey={JSON.stringify([
-                draftRates,
-                draftExpenses,
-                draftRules,
-              ])}
-            />
-          </Tabs.Panel>
-          <Tabs.Panel value="rules" pt="lg">
-            <CalculationRulesCard rules={draftRules} onChange={setDraftRules} />
-          </Tabs.Panel>
-          <Tabs.Panel value="review" pt="lg">
-            <PricingPreview
-              publishedRates={publishedRates}
-              draftRates={draftRates}
-              publishedExpenses={publishedExpenses}
-              draftExpenses={draftExpenses}
-              affectedCars={createDemoPriceImpact(publishedRates, draftRates)}
-              valid={valid}
-              ruleChangeCount={ruleChangeCount}
-              onPublish={publish}
-              onReset={reset}
-            />
-          </Tabs.Panel>
-        </Tabs>
+                ])}
+              />
+            </Tabs.Panel>
+            <Tabs.Panel value="rules" pt="lg">
+              <CalculationRulesCard
+                rules={draftRules}
+                onChange={setDraftRules}
+              />
+            </Tabs.Panel>
+            <Tabs.Panel value="review" pt="lg">
+              <PricingPreview
+                publishedRates={publishedRates}
+                draftRates={draftRates}
+                publishedExpenses={publishedExpenses}
+                draftExpenses={draftExpenses}
+                affectedCars={createDemoPriceImpact(publishedRates, draftRates)}
+                valid={valid}
+                ruleChangeCount={ruleChangeCount}
+                onPublish={publish}
+                onReset={reset}
+              />
+            </Tabs.Panel>
+          </Tabs>
+        )}
       </Stack>
     </section>
   );

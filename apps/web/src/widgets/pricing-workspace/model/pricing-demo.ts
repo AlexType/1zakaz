@@ -1,7 +1,8 @@
 import type { DemoRuleSet } from "./calculation-rules";
+import { CAR_COUNTRY_OPTIONS, type CarCountry } from "@/entities/car";
 
 export type Currency = "JPY" | "CNY" | "KRW" | "USD" | "EUR";
-export type Country = "japan" | "china" | "korea";
+export type Country = CarCountry;
 export type RateMode = "auto" | "manual";
 
 export type ExchangeRate = {
@@ -23,11 +24,7 @@ export type Expense = {
   note?: string;
 };
 
-export const COUNTRY_OPTIONS = [
-  { value: "japan", label: "Япония" },
-  { value: "china", label: "Китай" },
-  { value: "korea", label: "Корея" },
-] as const;
+export const COUNTRY_OPTIONS = CAR_COUNTRY_OPTIONS;
 
 export const CURRENCY_LABELS: Record<Currency, string> = {
   JPY: "Японская иена",

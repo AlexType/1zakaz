@@ -5,10 +5,10 @@ import { schemaResolver, useForm } from "@mantine/form";
 import type { StaffProfile } from "../../model/contracts";
 import { invitationSchema } from "../../lib/validation";
 import { normalizeRussianPhone } from "@/shared/lib/normalize-russian-phone";
-import { formatDateTime } from "@/shared/lib/format-date-time";
+import { formatCompactDateTime } from "@/shared/lib/format-compact-date";
 import { FormError } from "@/shared/ui/FormError";
+import { PhoneInput } from "@/shared/ui/PhoneInput";
 import { EmailInput } from "../EmailInput";
-import { PhoneInput } from "../PhoneInput";
 
 type InvitationFormProps = {
   roleName: string;
@@ -51,7 +51,7 @@ export function InvitationForm({
           Роль: {roleName}
         </Badge>
         <Text size="sm" c="dimmed">
-          Приглашение действует до {formatDateTime(expiresAt)}.
+          Приглашение действует до {formatCompactDateTime(expiresAt)}.
         </Text>
         <TextInput
           key={form.key("fullName")}

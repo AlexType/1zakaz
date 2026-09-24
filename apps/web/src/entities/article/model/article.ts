@@ -1,6 +1,14 @@
-import type { JSONContent } from "@tiptap/react";
-
 export type ArticleStatus = "draft" | "published";
+
+export type ArticleContentBlock = {
+  id?: string;
+  type: string;
+  props?: Record<string, boolean | number | string>;
+  content?: unknown;
+  children?: ArticleContentBlock[];
+};
+
+export type ArticleContent = ArticleContentBlock[];
 
 export type Article = {
   id: string;
@@ -8,10 +16,15 @@ export type Article = {
   slug: string;
   excerpt: string;
   categoryId: string;
+  tags: string[];
   coverUrl: string | null;
-  body: JSONContent;
+  coverAlt: string;
+  content: ArticleContent;
   status: ArticleStatus;
   authorName: string;
+  seoTitle: string;
+  seoDescription: string;
+  ogImageUrl: string | null;
   updatedAt: string;
   publishedAt: string | null;
 };

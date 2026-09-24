@@ -3,3 +3,9 @@
   margin-inline: auto;
   padding: clamp(1rem, 3vw, 2.5rem);
 }
+
+.tabsList {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}

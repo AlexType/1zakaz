@@ -50,3 +50,15 @@ export const SaveError: Story = {
     },
   },
 };
+export const Loading: Story = {
+  name: "Загрузка",
+  args: { loading: true },
+};
+export const LoadError: Story = {
+  name: "Ошибка загрузки",
+  args: { error: "Проверьте соединение и попробуйте ещё раз." },
+};
+export const Mobile: Story = {
+  name: "Телефон",
+  parameters: { viewport: { defaultViewport: "mobile1" } },
+};

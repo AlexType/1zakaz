@@ -2,27 +2,31 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button, Group, Modal, Stack, Text } from "@mantine/core";
-import type { Article } from "@/entities/article";
+import type { Article, ArticleCategory } from "@/entities/article";
 import { showActionSuccess } from "@/shared/lib/show-action-notification";
 import {
   ArticleEditor,
   ArticleList,
   ARTICLE_CATEGORIES,
+  resolveArticleSlug,
   type SaveArticleInput,
 } from "@/features/manage-article";
 import { DEMO_ARTICLES } from "../../lib/stories/demo-articles";
-import { createDemoArticleSlug } from "../../lib/stories/create-demo-article-slug";
 
 type ActiveArticle = { mode: "create" } | { mode: "edit"; id: string };
 
 export function ArticlesWorkspace({
   initialArticles = DEMO_ARTICLES,
   initialView = "list",
+  initialEditorMode = "edit",
+  categories = ARTICLE_CATEGORIES,
   loading = false,
   error = null,
 }: {
   initialArticles?: Article[];
   initialView?: "list" | "create" | "edit";
+  initialEditorMode?: "edit" | "preview";
+  categories?: ArticleCategory[];
   loading?: boolean;
   error?: string | null;
 }) {
@@ -40,8 +44,9 @@ export function ArticlesWorkspace({
   useEffect(() => () => objectUrls.current.forEach(URL.revokeObjectURL), []);
 
   async function save(input: SaveArticleInput) {
-    const previous =
-      active?.mode === "edit"
+    const previous = input.id
+      ? articles.find((article) => article.id === input.id)
+      : active?.mode === "edit"
         ? articles.find((article) => article.id === active.id)
         : undefined;
     const now = new Date().toISOString();
@@ -54,33 +59,37 @@ export function ArticlesWorkspace({
     const article: Article = {
       id: previous?.id ?? crypto.randomUUID(),
       title: input.title,
-      slug:
-        previous?.slug ??
-        createDemoArticleSlug(
-          input.title,
-          articles.map((item) => item.slug),
-        ),
+      slug: resolveArticleSlug(
+        input.slug,
+        input.title,
+        articles
+          .filter((item) => item.id !== previous?.id)
+          .map((item) => item.slug),
+      ),
       excerpt: input.excerpt,
       categoryId: input.categoryId,
-      body: input.body,
+      tags: input.tags,
+      content: input.content,
       coverUrl,
+      coverAlt: input.coverAlt,
       status: input.status,
-      authorName: previous?.authorName ?? "Орлов Михаил Петрович",
+      authorName: input.authorName,
+      seoTitle: input.seoTitle,
+      seoDescription: input.seoDescription,
+      ogImageUrl: input.ogImageUsesCover ? coverUrl : input.ogImageUrl,
       updatedAt: now,
       publishedAt:
-        input.status === "published" ? (previous?.publishedAt ?? now) : null,
+        input.status === "published"
+          ? (input.publishedAt ?? previous?.publishedAt ?? now)
+          : input.publishedAt,
     };
     setArticles((current) =>
       previous
         ? current.map((item) => (item.id === article.id ? article : item))
         : [article, ...current],
     );
-    showActionSuccess(
-      input.status === "published"
-        ? "Статья опубликована"
-        : "Черновик сохранён",
-    );
-    setActive(null);
+    if (input.status === "published") showActionSuccess("Статья опубликована");
+    return article;
   }
 
   const editingArticle =
@@ -93,9 +102,10 @@ export function ArticlesWorkspace({
         <ArticleEditor
           key={active.mode === "edit" ? active.id : "new"}
           initialArticle={editingArticle}
-          categories={ARTICLE_CATEGORIES}
+          categories={categories}
           onSave={save}
           onBack={() => setActive(null)}
+          initialMode={initialEditorMode}
         />
       ) : (
         <ArticleList
@@ -103,7 +113,7 @@ export function ArticlesWorkspace({
           loading={loading}
           error={loadError}
           onRetry={() => setLoadError(null)}
-          categories={ARTICLE_CATEGORIES}
+          categories={categories}
           onCreate={() => setActive({ mode: "create" })}
           onEdit={(article) => setActive({ mode: "edit", id: article.id })}
           onSetStatus={(article, status) =>
